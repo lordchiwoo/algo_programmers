@@ -7,50 +7,45 @@ public class Solution {
     static int[] sumOfSortedNumbers;
     static int[] numbers;
     static int target;
-    public int solution(int[] pnumbers, int ptarget) {
-        int answer = 0;
-        //비트 연산으로 1이면 + 0이면 -
-        //재귀 + DFS
-        int numIndex   = numbers.length;
+    static int answer = 0;
+    public int solution(int[] pNumbers, int pTarget) {
+        //사고의 흐름
+        //비트 연산으로 1이면 + 0이면 -  // 000...000 ~ 111...111 
+        //Case = 0 ~ Math.pow(2, numbers.length) - 1;
+        //재귀 + DFS??
 
+        //코딩 시작
         //공통인자들은 굳이 파라미터로 넘기고 싶지 않아서...
-        target = ptarget;
-        numbers = pnumbers;
+        numbers = pNumbers;
+        target = pTarget;   
+        int numIndex   = numbers.length;        
+
+        // 추가 아이디어 : 특정인덱스보다 아래에 있는 수들의 총합으로 아래에서 조합이 가능한지 미리 판별하기 위해 Sort And Summation
+        Arrays.sort(numbers);    //sort했으니 0번째가 가장 작은수 numIndex번째가 가장 큰 수
         sumOfSortedNumbers = new int[numIndex];
-
-        // 특정인덱스보다 아래에 있는 수들의 총합으로 아래에서 조합이 가능한지 미리 판별하기 위해 Sort And Summation
-        //SORT
-        Arrays.sort(numbers);
-
         for(int index=0, sum = 0;index < numIndex; index++)
         {
-            sum += numbers[index];  //sort했으니 0번째가 가장 작은수 numIndex번째가 가장 큰 수
+            sum += numbers[index]; // 작은 수 들부터 더해서 총합 어레이에 대입해둔다.
             sumOfSortedNumbers[index] = sum;
         }
         
-        // 000...000 ~ 111...111 
-        //(int maxCase = Math.pow(2, numbers.length) - 1;)  
-        answer = DFSlikeRecursion(numIndex-1, 0);  
+        DFSlikeRecursion(numIndex-1, 0);  
         return answer;
     }
-    public static int DFSlikeRecursion(int numIndex, int currentSum){
-        //마지막까지 내려왔으면 총 합이 target과 같은지 체크해서 결과를 리턴
-        if(numIndex == -1)
+    public static void DFSlikeRecursion(int numIndex, int currentSum){
+        if(numIndex >= 0)//마지막까지 내려왔으면 총 합이 target과 같은지 체크해서 결과를 리턴
         {
-            if(currentSum==target)   return 1;
-            else return 0;
+            //현재 인덱스 이하의 수를 모두 더한 값을 
+            if(Math.abs(target-currentSum) > sumOfSortedNumbers[numIndex] ) return;     //더하든 빼든 타겟에 도달할 수 없는 상태라면
+            //아래까지 살펴볼 필요가 없다.
+
+            DFSlikeRecursion(numIndex-1, currentSum-numbers[numIndex] );     //현재 인덱스 위치의 수를 뺐을 때 
+            DFSlikeRecursion(numIndex-1, currentSum+numbers[numIndex] );    //현재  인덱스 위치의 수를 더했을 때
         }
-
-        //현재 인덱스 이하의 수를 모두 더한 값을 
-        //if(target > (currentSum + sumOfSortedNumbers[numIndex]) ) return 0;     //더해도 타겟보다 작은 상태라면
-        //if(target < (currentSum - sumOfSortedNumbers[numIndex]) ) return 0;      //빼도 타겟보다 큰 상태라면        
-        if(Math.abs(target-currentSum) > sumOfSortedNumbers[numIndex] ) return 0;     //더하든 빼든 타겟에 도달할 수 없는 상태라면
-        //아래까지 살펴볼 필요가 없다.
-        
-        int subtractCurrentNumber = currentSum-numbers[numIndex]; //현재 인덱스 위치의 수를 빼고 다음인덱스로 넘어간다
-        int addCurrentNumber = currentSum-numbers[numIndex]; //현재  인덱스 위치의 수를 더하고 다음인덱스로 넘어간다
-
-        return DFSlikeRecursion(numIndex-1, subtractCurrentNumber ) + DFSlikeRecursion(numIndex-1, addCurrentNumber );
+        else
+        {
+            if(target==currentSum)   answer++;
+        }
     }
 }
 
@@ -66,6 +61,8 @@ public class Solution {
 테스트 8 〉	통과 (0.70ms, 52.8MB)
 
 //더하기 빼기 모두 포함
+        //if(target > (currentSum + sumOfSortedNumbers[numIndex]) ) return 0;     //더해도 타겟보다 작은 상태라면
+        //if(target < (currentSum - sumOfSortedNumbers[numIndex]) ) return 0;      //빼도 타겟보다 큰 상태라면        
 테스트 1 〉	통과 (1.79ms, 51.9MB)
 테스트 2 〉	통과 (1.47ms, 52.6MB)
 테스트 3 〉	통과 (1.46ms, 52.3MB)
