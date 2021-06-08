@@ -1,20 +1,25 @@
 //import Aprinter.Solution;
-import BtargetNumber.*;
+//import BtargetNumber.*;
+import CNetwork.Solution;;
 
 public class App {
     public static void main(String[] args) throws Exception {
         Solution solved = new Solution();
 
         //Aprinter
-        //int[] priorities = {2, 1, 3, 2};//  {1, 1, 9, 1, 1, 1};//  {2, 2, 5, 6, 7, 4, 1, 8, 3, 1, 3, 1, 5, 7, 4, 9, 3, 2};
+        //int{} priorities = {2, 1, 3, 2};//  {1, 1, 9, 1, 1, 1};//  {2, 2, 5, 6, 7, 4, 1, 8, 3, 1, 3, 1, 5, 7, 4, 9, 3, 2};
         //int location =2;//  0;//  8;
         //int myJobSequence = solved.solution(priorities, location);
         
         //BtargetNumber
-        int[] numbers = {1, 1, 1, 1, 1};//  {1, 1, 9, 1, 1, 1};//  {2, 2, 5, 6, 7, 4, 1, 8, 3, 1, 3, 1, 5, 7, 4, 9, 3, 2};
-        int target = 3;//  0;//  8;
+        //int{} numbers = {1, 1, 1, 1, 1};
+        //int target = 3;// 
+
+        //CNetwork
+        int[][] computers = {{1, 1, 0}, {1, 1, 1}, {0, 1, 1}};
+        int n = 3;//  
         
-        int myJobSequence = solved.solution(numbers, target);
+        int myJobSequence = solved.solution(n, computers);
 
         System.out.println("Hello, World!" + myJobSequence);
     }
