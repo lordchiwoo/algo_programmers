@@ -21,8 +21,8 @@ public class App {
         //int n = 3;//  
         
         //DWordTransform
-        String begin = 'hit';
-        String target = 'cog';
+        String begin = "hit";
+        String target = "cog";
         String[] words = {"hot", "dot", "dog", "lot", "log", "cog"};
 
         int answer = solved.solution(begin, target, words);
