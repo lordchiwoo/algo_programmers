@@ -1,6 +1,7 @@
 //import Aprinter.Solution;
 //import BtargetNumber.*;
-import CNetwork.Solution;;
+//import CNetwork.Solution;
+import DWordTransform.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -16,12 +17,17 @@ public class App {
         //int target = 3;// 
 
         //CNetwork
-        int[][] computers = {{1, 1, 0}, {1, 1, 1}, {0, 1, 1}};
-        int n = 3;//  
+        //int[][] computers = {{1, 1, 0}, {1, 1, 1}, {0, 1, 1}};
+        //int n = 3;//  
         
-        int myJobSequence = solved.solution(n, computers);
+        //DWordTransform
+        String begin = 'hit';
+        String target = 'cog';
+        String[] words = {"hot", "dot", "dog", "lot", "log", "cog"};
 
-        System.out.println("Hello, World!" + myJobSequence);
+        int answer = solved.solution(begin, target, words);
+
+        System.out.println("Answer is " + answer);
     }
 }
 /*
