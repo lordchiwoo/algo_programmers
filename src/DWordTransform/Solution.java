@@ -26,7 +26,7 @@ public class Solution {
         Map < Integer, String > wordMap = new HashMap < Integer, String > ();
         for (int idx = 0; idx < words.length; idx++) {
             wordMap.put(idx, words[idx]);
-            if (target == words[idx])
+            if (target.equals(words[idx]))
                 endIndex = idx;
         }
         if (endIndex == -1) return answer;
