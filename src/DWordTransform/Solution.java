@@ -1,8 +1,6 @@
 package DWordTransform;
 
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import java.util.LinkedList;
@@ -19,33 +17,33 @@ public class Solution {
 
         //거리가 1인애들만으로 인접노드 그래프를 구성한다음에 BFS로 최단거리 탐색을 하면 될 것 같음
         int answer = 0;
-        int endIndex;
+        int endIndex = -1;
 
         visited = new int[words.length];
         bfsQueueCurrent = new LinkedList < > ();
         bfsQueueNext = new LinkedList < > ();
 
-       
-        Map < String, Integer > wordMap = new HashMap < String, Integer > ();
-        for (int idx = 0; idx < words.length; idx++) {
-            wordMap.put(words[idx], idx);
-        }
 
-        //타겟이 words 안에 있으면 해당 인덱스를 종료인덱스로 지정
-        if (wordMap.containsKey(target)) endIndex = wordMap.get(target);
-        else    return answer;
+        Map < Integer, String > wordMap = new HashMap < Integer, String > ();
+        for (int idx = 0; idx < words.length; idx++) {
+            wordMap.put(idx, words[idx]);
+            //타겟이 words 안에 있으면 해당 인덱스를 종료인덱스로 지정
+            if (target.equals(words[idx]))
+                endIndex = idx;
+        }
+        if (endIndex == -1) return answer;
 
          //그래프를 Integer로 만드는 이유는... 인덱스 그대로 사용하면 편해서?;;
         //거리가 1인애들만으로 인접노드 그래프를 구성(N^2??)
-        Map < Integer, LinkedList < Integer >> listOfAdjNodeList = buildListOfAdjNodeList(wordMap);
+        LinkedList < LinkedList < Integer >> listOfAdjNodeList = buildListOfAdjNodeList(wordMap);
 
         //시작 스트링의 인접노드 그래프를 그려서 최초 탐색 후보를 지정한다
         LinkedList < Integer > linkedNodeList = buildAdjNodeList(begin, wordMap);
-
-        listOfAdjNodeList.put(listOfAdjNodeList.size(), linkedNodeList);
+        
+        listOfAdjNodeList.add(linkedNodeList);
         bfsQueueCurrent.add(listOfAdjNodeList.size() - 1);
 
-        answer = 1;
+        answer++;
 
         //최단거리 탐색 with visited
         while (!bfsQueueCurrent.isEmpty()) {
@@ -56,7 +54,6 @@ public class Solution {
             linkedNodeList = listOfAdjNodeList.get(currentNode);
             for (int adjNode: linkedNodeList) {
                 //종료인덱스를 찾으면 바로 종료
-                System.out.println(adjNode);
                 if (adjNode == endIndex)
                     return answer; 
                 else {
@@ -81,23 +78,23 @@ public class Solution {
         return answer;
     }
 
-    public Map < Integer, LinkedList < Integer >> buildListOfAdjNodeList(Map <  String, Integer > wordMap) {
-        Map < Integer, LinkedList < Integer >> lisfOfAdjNodeList = new HashMap < Integer, LinkedList < Integer >> ();
+    public LinkedList < LinkedList < Integer >> buildListOfAdjNodeList(Map < Integer, String > wordMap) {
+        LinkedList < LinkedList < Integer >> lisfOfAdjNodeList = new LinkedList < LinkedList < Integer >> ();
 
-        //아... 맵을 string integer로 바꾸니까 키(문자열)로 정렬되어서 lisfOfAdjNodeList 인덱스가 맛탱이가 가네요.
         //각 문자열 별로 인접노드를 탐색해온다.
-        for (Map.Entry < String, Integer > elem: wordMap.entrySet())        lisfOfAdjNodeList.put( elem.getValue(), buildAdjNodeList(elem.getKey(), wordMap) );
+        for (Map.Entry < Integer, String > elem: wordMap.entrySet())
+            lisfOfAdjNodeList.add(  buildAdjNodeList(elem.getValue(), wordMap)  );
 
         return lisfOfAdjNodeList;
     }
 
-    public LinkedList < Integer > buildAdjNodeList(String source, Map <  String, Integer > wordMap) {
+    public LinkedList < Integer > buildAdjNodeList(String source, Map < Integer, String > wordMap) {
         LinkedList < Integer > adjacentNodeList = new LinkedList < Integer > ();
 
         //각 문자열 별로 거리를 구해서 거리가 1인 인접노드를 찾는다.
-        for (Map.Entry <  String, Integer > elem: wordMap.entrySet()) 
-            if (1 == this.checkDistance(source, elem.getKey()))     // 거리가 1인 것만 인접노드 리스트에 추가
-                adjacentNodeList.add(elem.getValue());;
+        for (Map.Entry < Integer, String > elem: wordMap.entrySet())
+            if (1 == this.checkDistance(source, elem.getValue()))
+                adjacentNodeList.add(elem.getKey());
 
         return adjacentNodeList;
     }
