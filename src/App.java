@@ -21,11 +21,16 @@ public class App {
         //int n = 3;//  
         
         //DWordTransform
-        String begin = "hit";
-        String target = "cog";
-        String[] words = {"hot", "dot", "dog", "lot", "log", "cog"};
+        //String begin = "hit";
+        //String target = "cog";
+        //String[] words = {"hot", "dot", "dog", "lot", "log", "cog"};
 
-        int answer = solved.solution(begin, target, words);
+        
+        //EMostDistantNode
+        int[][] edge = {{3, 6}, {4, 3}, {3, 2}, {1, 3}, {1, 2}, {2, 4}, {5, 2}};
+        int n = 3;//  
+
+        int answer = solved.solution(n, edge);
 
         System.out.println("Answer is " + answer);
     }
