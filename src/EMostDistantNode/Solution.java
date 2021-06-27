@@ -56,8 +56,7 @@ public class Solution {
                 bfsQueueNext = new LinkedList < > ();
 
                 //그 다음이 없으면 종료해야되므로 현재 노드 카운트 저장 /  0 이면 더이상 갈곳이 없으므로 저장하지 않는다.
-                if (distanceNodeCount > 0)
-                    distanceStack.push(distanceNodeCount);
+                if (distanceNodeCount > 0)  distanceStack.push(distanceNodeCount);
 
                 //리셋
                 distanceNodeCount = 0;
@@ -74,25 +73,19 @@ public class Solution {
 
         //각 문자열 별로 인접노드를 탐색해온다.
         for (int[] nodeEdges: edges) {
-            Integer node0 = nodeEdges[0];
-            Integer node1 = nodeEdges[1];
+            LinkedList < Integer > edgeList;
+            for(int i=0;i<2;i++){
+                int mainNode = nodeEdges[i];
+                int subNode = nodeEdges[ i==1 ? 0 : 1 ];
 
-            LinkedList < Integer > edgeList0, edgeList1;
-            if (!mapOfAdjNodeList.containsKey(node0)) {
-                edgeList0 = new LinkedList < Integer > ();
-                mapOfAdjNodeList.put(node0, edgeList0);
+                if (!mapOfAdjNodeList.containsKey(mainNode)) {
+                    edgeList = new LinkedList < Integer > ();
+                    mapOfAdjNodeList.put(mainNode, edgeList);
+                }
+
+                edgeList = mapOfAdjNodeList.get(mainNode);
+                edgeList.add(subNode);
             }
-
-            if (!mapOfAdjNodeList.containsKey(node1)) {
-                edgeList1 = new LinkedList < Integer > ();
-                mapOfAdjNodeList.put(node1, edgeList1);
-            }
-
-            edgeList0 = mapOfAdjNodeList.get(node0);
-            edgeList1 = mapOfAdjNodeList.get(node1);
-
-            edgeList0.add(node1);
-            edgeList1.add(node0);
         }
 
         return mapOfAdjNodeList;
