@@ -34,6 +34,10 @@ public class Solution {
     Queue < Integer > bfsQueueNext;
 
     public int solution(int n, int[][] edge) {
+        //BFS로 1번에서부터 방문체크를 하면서 깊이를 같이 저장하고
+        //큐에 있는애들이 모두 방문되면 distances를 sort해서 최상위 값이 몇개인지 센다?...
+        //굳이 세야 되나? distance별로 node Count & Reset을 해도 되겠다.
+
         int answer = 0;
         int distanceNodeCount = 0;
 
@@ -46,13 +50,10 @@ public class Solution {
 
         bfsQueueCurrent = new LinkedList < > ();
         bfsQueueNext = new LinkedList < > ();
-        //BFS로 1번에서부터 방문체크를 하면서 깊이를 같이 저장하고
-        //큐에 있는애들이 모두 방문되면 distances를 sort해서 최상위 값이 몇개인지 센다?...
-        //굳이 세야 되나? distance별로 node Count & Reset을 해도 되겠다.
 
         Integer firstNode = Integer.valueOf(1);
         bfsQueueCurrent.offer(firstNode);
-        //최초 노드도 방문했다고 처리 안해주면 맛탱이가 갑니다.
+        //최초 노드도 방문했다고 처리 안해주면 맛탱이가 갑니다. ㅠㅠ
         visited[firstNode] = 1;
 
         while (!bfsQueueCurrent.isEmpty()) {
@@ -91,18 +92,21 @@ public class Solution {
     public HashMap < Integer, LinkedList < Integer >> buildMapOfAdjNodeList(int[][] edges) {
         HashMap < Integer, LinkedList < Integer >> mapOfAdjNodeList = new HashMap < Integer, LinkedList < Integer >> ();
 
-        //각 문자열 별로 인접노드를 탐색해온다.
+        //엣지로 주어진 두개의 노드에 각각 상대 노드를 인접노드로 추가해준다.
         for (int[] nodeEdges: edges) {
             LinkedList < Integer > edgeList;
             for(int i=0;i<2;i++){
+                //내가 메인노드 니가 서브노드
                 int mainNode = nodeEdges[i];
                 int subNode = nodeEdges[ i==1 ? 0 : 1 ];
 
+                //내 노드의 인접노드 리스트가 없으면 생성해준다.
                 if (!mapOfAdjNodeList.containsKey(mainNode)) {
                     edgeList = new LinkedList < Integer > ();
                     mapOfAdjNodeList.put(mainNode, edgeList);
                 }
 
+                //내 노드의 인접노드 리스트를 가지고 와서 서브노드를 집어 넣는다.
                 edgeList = mapOfAdjNodeList.get(mainNode);
                 edgeList.add(subNode);
             }
