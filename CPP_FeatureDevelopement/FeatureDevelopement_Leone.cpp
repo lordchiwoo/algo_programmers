@@ -2,6 +2,7 @@
 
 using namespace std;
 
+//https://programmers.co.kr/learn/courses/30/lessons/42586?language=cpp
 vector<int> solution(vector<int> progresses, vector<int> speeds) {
     vector<int> answer;
     
