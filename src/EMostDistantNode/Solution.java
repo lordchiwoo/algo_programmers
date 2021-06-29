@@ -46,7 +46,7 @@ public class Solution {
         LinkedList < Integer > linkedNodeList;
         Stack < Integer > distanceStack = new Stack < Integer > ();
 
-        visited = new int[mapOfAdjNodeList.size() + 1];
+        visited = new int[n + 1];
 
         bfsQueueCurrent = new LinkedList < > ();
         bfsQueueNext = new LinkedList < > ();
