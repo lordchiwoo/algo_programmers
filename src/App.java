@@ -2,7 +2,8 @@
 //import BtargetNumber.*;
 //import CNetwork.Solution;
 //import DWordTransform.Solution;
-import EMostDistantNode.Solution;
+//import EMostDistantNode.Solution;
+import FRanking.Solution;
 
 
 public class App {
@@ -29,10 +30,14 @@ public class App {
 
         
         //EMostDistantNode
-        int[][] edge = {{3, 6}, {4, 3}, {3, 2}, {1, 3}, {1, 2}, {2, 4}, {5, 2}};
-        int n = 3;//  
+        //int[][] edge = {{3, 6}, {4, 3}, {3, 2}, {1, 3}, {1, 2}, {2, 4}, {5, 2}};
+        //int n = 3;//  
 
-        int answer = solved.solution(n, edge);
+        //EMostDistantNode
+        int[][] results = {{4, 3}, {4, 2}, {3, 2}, {1, 2}, {2, 5}};
+        int n = 5;//  
+
+        int answer = solved.solution(n, results);
 
         System.out.println("Answer is " + answer);
     }

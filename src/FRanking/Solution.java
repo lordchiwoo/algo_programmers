@@ -1,9 +1,11 @@
 package FRanking;
 
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -31,6 +33,7 @@ n	results	                                    return
 5번 선수는 4위인 2번 선수에게 패배했기 때문에 5위입니다.
 */
 public class Solution {
+    HashMap < Integer, PlayerRecord> mapOfPlayerRecord;
     public int solution(int n, int[][] results) {
         int answer = 0;
         //생각의 흐름
@@ -44,11 +47,134 @@ public class Solution {
         // - 경기결과를 1회 순회 하고 나서 정해진 순위 노드를 기준으로 트리...를 구성해 나가는 느낌적인 느낌.
         // 데이터 구조가 엄청 복잡해지겠다.
 
+        //그래프 생성
+        mapOfPlayerRecord = buildMapOfPlayerRecord(results);
+        
+        System.out.println(mapOfPlayerRecord);
+        List<Integer> leaguePlayer = new ArrayList<Integer>();
+        for(int i=1;i<=n;i++) leaguePlayer.add(i);
 
+        answer = getFixedRankRecursive(leaguePlayer);
         return answer;
     }
-}
 
+    
+    //n-1회 경기 결과를 가진 기록을 찾는다(순위 확정)
+    //기록의 상위 리스트에 있는 노드들은 상위 노드만 남기고
+    //기록의 하위 리스트에 있는 노드들은 하위 노드만 남긴다.
+    //남은 노드수 w-1회, l-1회 경기 결과를 가진 기록을 찾는다. (왼쪽 트리 오른쪽 트리?)
+    private int getFixedRankRecursive(List<Integer> leaguePlayer) {
+        int leagueSize = leaguePlayer.size();
+        int rankFixingMatchSize = leagueSize - 1;
+
+        PlayerRecord rankFixedPlayerRecord = null;
+        //리스트에 있는 노드만 남기고 제거 한 뒤에 
+        for(int playerIndex : leaguePlayer)
+        {
+            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            pRecord.filterGameResult(leaguePlayer);
+            if(pRecord.matchNumbers() == rankFixingMatchSize)
+            {
+                rankFixedPlayerRecord = pRecord;
+                break;
+            }
+        }
+        //못찾으면 거기서부터 리턴한다.
+        if(rankFixedPlayerRecord==null) return 0;
+        
+        int winner = getFixedRankRecursive(rankFixedPlayerRecord.getWinnerList());
+        int loser = getFixedRankRecursive(rankFixedPlayerRecord.getLoserList());
+
+        return winner + loser + 1;
+    }
+    public HashMap < Integer, PlayerRecord> buildMapOfPlayerRecord(int[][] results) {
+        HashMap < Integer, PlayerRecord> mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
+
+        //경기 결과로 주어진 두개의 기록에 각각 상대 선수와의 경기 결과를 기록한다
+        for (int[] gameResult: results) {
+            PlayerRecord playerRecord;
+            int winner = gameResult[0];
+            //int loser = gameResult[1];
+
+            for(int i=0;i<2;i++){
+                //내가 메인노드 니가 서브노드
+                int recordHolder = gameResult[i];
+                int opponent = gameResult[ i==1 ? 0 : 1 ];
+
+                //내 노드의 인접노드 리스트가 없으면 생성해준다.
+                if (!mapOfPlayerRecord.containsKey(recordHolder)) {
+                    playerRecord = new PlayerRecord (recordHolder);
+                    mapOfPlayerRecord.put(recordHolder, playerRecord);
+                }
+
+                //내 노드의 인접노드 리스트를 가지고 와서 서브노드를 집어 넣는다.
+                playerRecord = mapOfPlayerRecord.get(recordHolder);
+                playerRecord.putGameResult(opponent, recordHolder==winner);// i==0 );
+            }
+        }
+
+        return mapOfPlayerRecord;
+    }
+
+    public class PlayerRecord{
+        public int playerIndex;
+        public List<Integer> winFromThisPlayers, loseFromThisPlayers;
+        public PlayerRecord(int playerIndex){
+            this.playerIndex = playerIndex;
+            this.winFromThisPlayers = new ArrayList<Integer>();
+            this.loseFromThisPlayers = new ArrayList<Integer>();
+        }
+        public void putGameResult(int opponent, boolean amIWinner)
+        {
+            if(amIWinner){
+                winFromThisPlayers.add(opponent);
+            }
+            else{
+                loseFromThisPlayers.add(opponent);
+            }
+        }
+        public List<Integer> getWinnerList(){
+            return winFromThisPlayers;
+        }
+        public List<Integer> getLoserList(){
+            return loseFromThisPlayers;
+        }
+        public void setWinnerList(List<Integer> list){
+            winFromThisPlayers = list;
+        }
+        public void setLoserList(List<Integer> list){
+            loseFromThisPlayers = list;
+        }
+
+        public void filterGameResult(List<Integer> leagueList) {
+            setWinnerList(
+                intersection(winFromThisPlayers, leagueList)
+            );
+            setLoserList(
+                intersection(loseFromThisPlayers, leagueList)
+            );
+        }
+        public <T> List<T> intersection(List<T> list1, List<T> list2) {
+            List<T> list = new ArrayList<T>();
+    
+            for (T t : list1) {
+                if(list2.contains(t)) {
+                    list.add(t);
+                }
+            }
+    
+            return list;
+        }
+        public int matchNumbers()
+        {
+            return winFromThisPlayers.size() + loseFromThisPlayers.size();
+        }
+        public String toString() { 
+            return "Name: '" + this.playerIndex + "', winFromThisPlayers: '" + this.winFromThisPlayers.toString() + "', loseFromThisPlayers: '" + this.loseFromThisPlayers.toString() + "\n'";
+        } 
+    }
+
+}
 /*
 
 */
