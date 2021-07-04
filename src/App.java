@@ -34,8 +34,8 @@ public class App {
         //int n = 3;//  
 
         //EMostDistantNode
-        int[][] results = {{4, 3}, {4, 2}, {3, 2}, {1, 2}, {2, 5}};
-        int n = 5;//  
+        int[][] results = {{4, 3}, {4, 2}, {3, 2}, {1, 2}, {2, 5}, {5, 6}, {6, 7}};
+        int n = 7;//  
 
         int answer = solved.solution(n, results);
 

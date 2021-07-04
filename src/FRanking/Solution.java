@@ -1,13 +1,11 @@
 package FRanking;
 
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.Map;
+import java.util.Set;
 
 //https://programmers.co.kr/learn/courses/30/lessons/49191
 /*
@@ -33,7 +31,7 @@ n	results	                                    return
 5번 선수는 4위인 2번 선수에게 패배했기 때문에 5위입니다.
 */
 public class Solution {
-    HashMap < Integer, PlayerRecord> mapOfPlayerRecord;
+    Map < Integer, PlayerRecord> mapOfPlayerRecord;
     public int solution(int n, int[][] results) {
         int answer = 0;
         //생각의 흐름
@@ -50,7 +48,8 @@ public class Solution {
         //그래프 생성
         mapOfPlayerRecord = buildMapOfPlayerRecord(results);
         
-        System.out.println(mapOfPlayerRecord);
+        //System.out.println(mapOfPlayerRecord);
+        // 최초 순위 선정을 위한 경기자는 모든 선수
         List<Integer> leaguePlayer = new ArrayList<Integer>();
         for(int i=1;i<=n;i++) leaguePlayer.add(i);
 
@@ -68,27 +67,35 @@ public class Solution {
         int rankFixingMatchSize = leagueSize - 1;
 
         PlayerRecord rankFixedPlayerRecord = null;
-        //리스트에 있는 노드만 남기고 제거 한 뒤에 
         for(int playerIndex : leaguePlayer)
         {
             PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            //리스트에 있는 노드만 남기고 제거 한 뒤에 
             pRecord.filterGameResult(leaguePlayer);
+            
+            //리그 내 모든 선수에게 이기고 진 선수를 찾으면
             if(pRecord.matchNumbers() == rankFixingMatchSize)
             {
+                //순위가 결정되었다!
                 rankFixedPlayerRecord = pRecord;
                 break;
             }
         }
-        //못찾으면 거기서부터 리턴한다.
+        //못찾으면 거기서부터 리턴한다. 
+        //내 기준 위아래 있는 애는 내 순위를 모르니 모두 알 수 없음이 된다.
         if(rankFixedPlayerRecord==null) return 0;
         
+        //이긴자의 리그
         int winner = getFixedRankRecursive(rankFixedPlayerRecord.getWinnerList());
+        //패배자의 리그
         int loser = getFixedRankRecursive(rankFixedPlayerRecord.getLoserList());
 
+        //이긴자 리그에서 찾은 랭크와 패배자 리그에서 찾은 랭크를 더하고
+        //현재리그의 랭크도 찾았으니 +1 (중요!)
         return winner + loser + 1;
     }
-    public HashMap < Integer, PlayerRecord> buildMapOfPlayerRecord(int[][] results) {
-        HashMap < Integer, PlayerRecord> mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
+    public Map < Integer, PlayerRecord> buildMapOfPlayerRecord(int[][] results) {
+        Map < Integer, PlayerRecord> mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
 
         //경기 결과로 주어진 두개의 기록에 각각 상대 선수와의 경기 결과를 기록한다
         for (int[] gameResult: results) {
@@ -113,7 +120,53 @@ public class Solution {
             }
         }
 
+        // 나에게 이긴사람을 이긴사람은 모두 나를 이기고
+        // 나에게 진 사람에게 진사람은 모두 나에게 진다.
+        // 검출 로직을 n-1회 경기로 잡았기 때문에 기록을 모두 도출해야한다.ㅠㅠㅠ
+        pRecordMerge(mapOfPlayerRecord);
         return mapOfPlayerRecord;
+    }
+
+    private void pRecordMerge(Map<Integer, PlayerRecord> mapOfPlayerRecord) {
+        boolean isChanged=true;
+        while(isChanged)
+        {
+            isChanged=false;
+            // 경기 기록을 하나씩 꺼내서
+            for(Map.Entry<Integer, PlayerRecord> pRecordSet : mapOfPlayerRecord.entrySet()){
+                PlayerRecord pRecord = pRecordSet.getValue();
+                int recordSize = pRecord.matchNumbers();
+
+                List<Integer> playerList;
+                // 나에게 이긴사람을 이긴사람은 모두 나를 이긴 걸로
+                playerList = pRecord.getWinnerList();
+                for(int winner : pRecord.getWinnerList())
+                {
+                    playerList =  union(
+                        playerList,
+                        mapOfPlayerRecord.get(winner).getWinnerList()
+                    );
+                }
+                pRecord.setWinnerList(playerList);
+
+                // 나에게 진 사람에게 진사람은 모두 나에게 진걸로
+                playerList = pRecord.getLoserList();
+                for(int loser : pRecord.getLoserList())
+                {
+                    playerList =  union(
+                        playerList,
+                        mapOfPlayerRecord.get(loser).getLoserList()
+                    );
+                }
+                pRecord.setLoserList(playerList);
+
+                // 경기 결과에 변동이 없을 때 까지 쭉 찾아낸다... 시간복잡도 폭발!.ㅠㅠ
+                // DFS로 짜면 반복이 좀 줄어들 것 같긴 한데..ㅠ
+                if(recordSize == pRecord.matchNumbers()){
+                    isChanged=true;
+                }
+            }
+        }
     }
 
     public class PlayerRecord{
@@ -154,17 +207,7 @@ public class Solution {
                 intersection(loseFromThisPlayers, leagueList)
             );
         }
-        public <T> List<T> intersection(List<T> list1, List<T> list2) {
-            List<T> list = new ArrayList<T>();
-    
-            for (T t : list1) {
-                if(list2.contains(t)) {
-                    list.add(t);
-                }
-            }
-    
-            return list;
-        }
+        
         public int matchNumbers()
         {
             return winFromThisPlayers.size() + loseFromThisPlayers.size();
@@ -172,6 +215,28 @@ public class Solution {
         public String toString() { 
             return "Name: '" + this.playerIndex + "', winFromThisPlayers: '" + this.winFromThisPlayers.toString() + "', loseFromThisPlayers: '" + this.loseFromThisPlayers.toString() + "\n'";
         } 
+    }
+
+    //리스트의 합집합 교집합 구하기
+    //https://stackoverflow.com/questions/5283047/intersection-and-union-of-arraylists-in-java
+    public <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
+    }
+    public <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<T>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        return new ArrayList<T>(set);
     }
 
 }
