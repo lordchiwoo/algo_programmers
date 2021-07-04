@@ -162,7 +162,7 @@ public class Solution {
 
                 // 경기 결과에 변동이 없을 때 까지 쭉 찾아낸다... 시간복잡도 폭발!.ㅠㅠ
                 // DFS로 짜면 반복이 좀 줄어들 것 같긴 한데..ㅠ
-                if(recordSize == pRecord.matchNumbers()){
+                if(recordSize != pRecord.matchNumbers()){
                     isChanged=true;
                 }
             }
