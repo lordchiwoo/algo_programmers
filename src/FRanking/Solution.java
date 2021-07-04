@@ -51,7 +51,10 @@ public class Solution {
         //System.out.println(mapOfPlayerRecord);
         // 최초 순위 선정을 위한 경기자는 모든 선수
         List<Integer> leaguePlayer = new ArrayList<Integer>();
-        for(int i=1;i<=n;i++) leaguePlayer.add(i);
+        for(int i=1;i<=n;i++){
+            leaguePlayer.add(i);
+            if(mapOfPlayerRecord.get(i)==null) mapOfPlayerRecord.put(i, new PlayerRecord(i));
+        }
 
         answer = getFixedRankRecursive(leaguePlayer);
         return answer;
@@ -70,6 +73,11 @@ public class Solution {
         for(int playerIndex : leaguePlayer)
         {
             PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            if(pRecord==null)
+            {
+                System.out.println(mapOfPlayerRecord);
+                System.out.println(playerIndex);
+            }
             //리스트에 있는 노드만 남기고 제거 한 뒤에 
             pRecord.filterGameResult(leaguePlayer);
             
@@ -241,5 +249,14 @@ public class Solution {
 
 }
 /*
-
+테스트 1 〉	통과 (0.76ms, 52.2MB)
+테스트 2 〉	통과 (1.27ms, 52.5MB)
+테스트 3 〉	통과 (3.66ms, 52.5MB)
+테스트 4 〉	통과 (1.10ms, 51.9MB)
+테스트 5 〉	통과 (12.47ms, 55.3MB)
+테스트 6 〉	통과 (25.26ms, 56.6MB)
+테스트 7 〉	통과 (86.87ms, 70.5MB)
+테스트 8 〉	통과 (135.91ms, 75.4MB)
+테스트 9 〉	통과 (169.12ms, 102MB)
+테스트 10 〉	통과 (136.68ms, 77.4MB)
 */
