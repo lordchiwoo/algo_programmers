@@ -48,20 +48,24 @@ public class Solution {
         // 변화가 없을때까지 승리한노드들의 승리한 노드를 가져오고 패배한 노드의 패배한 노드를 가져오도록 프로그램을 수정...했는데 푸느라 급급해서 무식한 방법으로 돌렸다.
         // 그리고 어차피 이렇게 되면 서브노드서브노드 갈필요 없이 그냥 다 가져온다음에 매치 케이스가 n-1인지 모두 빙빙 돌면서 검사해도 되겠다...ㅜ
 
+        
+        // 최초 순위 선정을 위한 경기자는 모든 선수
+        mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
+        List<Integer> leaguePlayer = new ArrayList<Integer>();
+        for(int i=1;i<=n;i++){
+            leaguePlayer.add(i);
+            mapOfPlayerRecord.put(i, new PlayerRecord(i));
+        }
+
         //그래프 생성
         buildMapOfPlayerRecord(results);
 
         //System.out.println(mapOfPlayerRecord);
-        // 최초 순위 선정을 위한 경기자는 모든 선수
-        List<Integer> leaguePlayer = new ArrayList<Integer>();
-        for(int i=1;i<=n;i++){
-            leaguePlayer.add(i);
-            if(mapOfPlayerRecord.get(i)==null) mapOfPlayerRecord.put(i, new PlayerRecord(i));
-        }
 
         //pRecordMerge();
         pRecordMergeRecursive(n);
 
+        System.out.println(mapOfPlayerRecord);
         //리커시브하게 승리자 패배자 노드들 별로 리그전을 돌린것처럼 해서 W-1, L-1회 승리한 선수를 찾는 로직
         //answer = getFixedRankRecursive(leaguePlayer);
 
@@ -71,8 +75,6 @@ public class Solution {
     }
     
     public void buildMapOfPlayerRecord(int[][] results) {
-        mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
-
         //경기 결과로 주어진 두개의 기록에 각각 상대 선수와의 경기 결과를 기록한다
         for (int[] gameResult: results) {
             PlayerRecord playerRecord;
@@ -84,18 +86,13 @@ public class Solution {
                 int recordHolder = gameResult[i];
                 int opponent = gameResult[ i==1 ? 0 : 1 ];
 
-                //내 노드의 인접노드 리스트가 없으면 생성해준다.
-                if (!mapOfPlayerRecord.containsKey(recordHolder)) {
-                    playerRecord = new PlayerRecord (recordHolder);
-                    mapOfPlayerRecord.put(recordHolder, playerRecord);
-                }
-
                 //내 노드의 인접노드 리스트를 가지고 와서 서브노드를 집어 넣는다.
                 playerRecord = mapOfPlayerRecord.get(recordHolder);
                 playerRecord.putGameResult(opponent, recordHolder==winner);// i==0 );
             }
         }
-
+ 
+        System.out.println(mapOfPlayerRecord);
         // 나에게 이긴사람을 이긴사람은 모두 나를 이기고
         // 나에게 진 사람에게 진사람은 모두 나에게 진다.
         // 검출 로직을 n-1회 경기로 잡았기 때문에 기록을 모두 도출해야한다.ㅠㅠㅠ
@@ -186,6 +183,30 @@ public class Solution {
         //현재리그의 랭크도 찾았으니 +1 (중요!)
         return winner + loser + 1;
     }
+    
+
+    //리스트의 합집합 교집합 구하기
+    //https://stackoverflow.com/questions/5283047/intersection-and-union-of-arraylists-in-java
+    public <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
+    }
+    public <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<T>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        return new ArrayList<T>(set);
+    }
+
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
@@ -320,28 +341,6 @@ public class Solution {
         public String toString() { 
             return "Name: '" + this.playerIndex + "', winFromThisPlayers: '" + this.winFromThisPlayers.toString() + "', loseFromThisPlayers: '" + this.loseFromThisPlayers.toString() + "\n'";
         } 
-    }
-
-    //리스트의 합집합 교집합 구하기
-    //https://stackoverflow.com/questions/5283047/intersection-and-union-of-arraylists-in-java
-    public <T> List<T> intersection(List<T> list1, List<T> list2) {
-        List<T> list = new ArrayList<T>();
-
-        for (T t : list1) {
-            if(list2.contains(t)) {
-                list.add(t);
-            }
-        }
-
-        return list;
-    }
-    public <T> List<T> union(List<T> list1, List<T> list2) {
-        Set<T> set = new HashSet<T>();
-
-        set.addAll(list1);
-        set.addAll(list2);
-
-        return new ArrayList<T>(set);
     }
 
 }
