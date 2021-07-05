@@ -49,8 +49,8 @@ public class Solution {
         // 그리고 어차피 이렇게 되면 서브노드서브노드 갈필요 없이 그냥 다 가져온다음에 매치 케이스가 n-1인지 모두 빙빙 돌면서 검사해도 되겠다...ㅜ
 
         //그래프 생성
-        mapOfPlayerRecord = buildMapOfPlayerRecord(results);
-        
+        buildMapOfPlayerRecord(results);
+
         //System.out.println(mapOfPlayerRecord);
         // 최초 순위 선정을 위한 경기자는 모든 선수
         List<Integer> leaguePlayer = new ArrayList<Integer>();
@@ -58,6 +58,9 @@ public class Solution {
             leaguePlayer.add(i);
             if(mapOfPlayerRecord.get(i)==null) mapOfPlayerRecord.put(i, new PlayerRecord(i));
         }
+
+        //pRecordMerge();
+        pRecordMergeRecursive(n);
 
         //리커시브하게 승리자 패배자 노드들 별로 리그전을 돌린것처럼 해서 W-1, L-1회 승리한 선수를 찾는 로직
         //answer = getFixedRankRecursive(leaguePlayer);
@@ -126,8 +129,8 @@ public class Solution {
         //현재리그의 랭크도 찾았으니 +1 (중요!)
         return winner + loser + 1;
     }
-    public Map < Integer, PlayerRecord> buildMapOfPlayerRecord(int[][] results) {
-        Map < Integer, PlayerRecord> mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
+    public void buildMapOfPlayerRecord(int[][] results) {
+        mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
 
         //경기 결과로 주어진 두개의 기록에 각각 상대 선수와의 경기 결과를 기록한다
         for (int[] gameResult: results) {
@@ -155,11 +158,11 @@ public class Solution {
         // 나에게 이긴사람을 이긴사람은 모두 나를 이기고
         // 나에게 진 사람에게 진사람은 모두 나에게 진다.
         // 검출 로직을 n-1회 경기로 잡았기 때문에 기록을 모두 도출해야한다.ㅠㅠㅠ
-        pRecordMerge(mapOfPlayerRecord);
-        return mapOfPlayerRecord;
+        
+        return;
     }
 
-    private void pRecordMerge(Map<Integer, PlayerRecord> mapOfPlayerRecord) {
+    private void pRecordMerge() {
         boolean isChanged=true;
         while(isChanged)
         {
@@ -199,6 +202,45 @@ public class Solution {
                 }
             }
         }
+    }
+    Map < Character, int[]> visited;
+    private void pRecordMergeRecursive(int n) {
+        // 경기 기록을 하나씩 꺼내서
+        visited = new HashMap < Character, int[]> ();
+        visited.put('W', new int[n+1]);
+        visited.put('L', new int[n+1]);
+
+        for(int playerIndex=1; playerIndex <= n ; playerIndex++){
+            mergeAndUpload(playerIndex, 'W');
+            mergeAndUpload(playerIndex, 'L');
+        }
+    }
+
+    private List<Integer> mergeAndUpload(int recordHolder, char recordType) {
+        PlayerRecord pRecord = mapOfPlayerRecord.get(recordHolder);
+        List<Integer> playerList;
+        if(recordType=='W') playerList = pRecord.getWinnerList();
+        else playerList = pRecord.getLoserList();
+
+        if(visited.get(recordType)[recordHolder] ==1)
+            return playerList;
+
+        for(int player : playerList)
+        {
+            playerList =  union(
+                playerList,
+                mergeAndUpload(player, recordType)//mapOfPlayerRecord.get(winner).getWinnerList()
+            );
+        }
+        
+        if(recordType=='W')
+            pRecord.setWinnerList(playerList);
+        else
+            pRecord.setLoserList(playerList);
+
+        visited.get(recordType)[recordHolder]=1;
+
+        return playerList;
     }
 
     public class PlayerRecord{
@@ -283,4 +325,17 @@ public class Solution {
 테스트 8 〉	통과 (135.91ms, 75.4MB)
 테스트 9 〉	통과 (169.12ms, 102MB)
 테스트 10 〉	통과 (136.68ms, 77.4MB)
+
+
+최종
+테스트 1 〉	통과 (0.42ms, 53.2MB)
+테스트 2 〉	통과 (0.68ms, 52.1MB)
+테스트 3 〉	통과 (3.32ms, 53.1MB)
+테스트 4 〉	통과 (0.75ms, 53.4MB)
+테스트 5 〉	통과 (9.16ms, 53.9MB)
+테스트 6 〉	통과 (16.86ms, 54.4MB)
+테스트 7 〉	통과 (48.25ms, 61.8MB)
+테스트 8 〉	통과 (77.37ms, 70.8MB)
+테스트 9 〉	통과 (95.66ms, 74MB)
+테스트 10 〉	통과 (130.83ms, 71.5MB)
 */
