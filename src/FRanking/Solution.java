@@ -69,66 +69,7 @@ public class Solution {
         answer = getFixedRankIteration(n);
         return answer;
     }
-
     
-    private int getFixedRankIteration(int n) {
-        int answer =0;
-        int rankFixingMatchSize = n-1;
-
-        for(int playerIndex=1; playerIndex <= n ; playerIndex++){
-            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
-            //System.out.println(pRecord);
-            if(pRecord.matchNumbers() == rankFixingMatchSize)
-            {
-                //순위가 결정되었다!
-                answer++;
-            }
-        }
-        return answer;
-    }
-
-
-    //n-1회 경기 결과를 가진 기록을 찾는다(순위 확정)
-    //기록의 상위 리스트에 있는 노드들은 상위 노드만 남기고
-    //기록의 하위 리스트에 있는 노드들은 하위 노드만 남긴다.
-    //남은 노드수 w-1회, l-1회 경기 결과를 가진 기록을 찾는다. (왼쪽 트리 오른쪽 트리?)
-    private int getFixedRankRecursive(List<Integer> leaguePlayer) {
-        int leagueSize = leaguePlayer.size();
-        int rankFixingMatchSize = leagueSize - 1;
-
-        PlayerRecord rankFixedPlayerRecord = null;
-        for(int playerIndex : leaguePlayer)
-        {
-            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
-            if(pRecord==null)
-            {
-                System.out.println(mapOfPlayerRecord);
-                System.out.println(playerIndex);
-            }
-            //리스트에 있는 노드만 남기고 제거 한 뒤에 
-            pRecord.filterGameResult(leaguePlayer);
-            
-            //리그 내 모든 선수에게 이기고 진 선수를 찾으면
-            if(pRecord.matchNumbers() == rankFixingMatchSize)
-            {
-                //순위가 결정되었다!
-                rankFixedPlayerRecord = pRecord;
-                break;
-            }
-        }
-        //못찾으면 거기서부터 리턴한다. 
-        //내 기준 위아래 있는 애는 내 순위를 모르니 모두 알 수 없음이 된다.
-        if(rankFixedPlayerRecord==null) return 0;
-        
-        //이긴자의 리그
-        int winner = getFixedRankRecursive(rankFixedPlayerRecord.getWinnerList());
-        //패배자의 리그
-        int loser = getFixedRankRecursive(rankFixedPlayerRecord.getLoserList());
-
-        //이긴자 리그에서 찾은 랭크와 패배자 리그에서 찾은 랭크를 더하고
-        //현재리그의 랭크도 찾았으니 +1 (중요!)
-        return winner + loser + 1;
-    }
     public void buildMapOfPlayerRecord(int[][] results) {
         mapOfPlayerRecord = new HashMap < Integer, PlayerRecord> ();
 
@@ -203,15 +144,83 @@ public class Solution {
             }
         }
     }
+    
+    //n-1회 경기 결과를 가진 기록을 찾는다(순위 확정)
+    //기록의 상위 리스트에 있는 노드들은 상위 노드만 남기고
+    //기록의 하위 리스트에 있는 노드들은 하위 노드만 남긴다.
+    //남은 노드수 w-1회, l-1회 경기 결과를 가진 기록을 찾는다. (왼쪽 트리 오른쪽 트리?)
+    private int getFixedRankRecursive(List<Integer> leaguePlayer) {
+        int leagueSize = leaguePlayer.size();
+        int rankFixingMatchSize = leagueSize - 1;
+
+        PlayerRecord rankFixedPlayerRecord = null;
+        for(int playerIndex : leaguePlayer)
+        {
+            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            if(pRecord==null)
+            {
+                System.out.println(mapOfPlayerRecord);
+                System.out.println(playerIndex);
+            }
+            //리스트에 있는 노드만 남기고 제거 한 뒤에 
+            pRecord.filterGameResult(leaguePlayer);
+            
+            //리그 내 모든 선수에게 이기고 진 선수를 찾으면
+            if(pRecord.matchNumbers() == rankFixingMatchSize)
+            {
+                //순위가 결정되었다!
+                rankFixedPlayerRecord = pRecord;
+                break;
+            }
+        }
+        //못찾으면 거기서부터 리턴한다. 
+        //내 기준 위아래 있는 애는 내 순위를 모르니 모두 알 수 없음이 된다.
+        if(rankFixedPlayerRecord==null) return 0;
+        
+        //이긴자의 리그
+        int winner = getFixedRankRecursive(rankFixedPlayerRecord.getWinnerList());
+        //패배자의 리그
+        int loser = getFixedRankRecursive(rankFixedPlayerRecord.getLoserList());
+
+        //이긴자 리그에서 찾은 랭크와 패배자 리그에서 찾은 랭크를 더하고
+        //현재리그의 랭크도 찾았으니 +1 (중요!)
+        return winner + loser + 1;
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     Map < Character, int[]> visited;
     private void pRecordMergeRecursive(int n) {
-        // 경기 기록을 하나씩 꺼내서
+        //각 레코드 타입별로 방문체크를 해준다.
         visited = new HashMap < Character, int[]> ();
         visited.put('W', new int[n+1]);
         visited.put('L', new int[n+1]);
 
+        
+        // 경기 기록을 하나씩 꺼내서 
         for(int playerIndex=1; playerIndex <= n ; playerIndex++){
+            //승리자의 승리자의 승리자의 승리자 기록부터 꺼내서 합치고 리턴하고 합치고 리턴하고 합친다.
             mergeAndUpload(playerIndex, 'W');
+            //패배자의 패배자의 패배자의 패배자 기록부터 꺼내서 합치고 리턴하고 합치고 리턴하고 합친다.
             mergeAndUpload(playerIndex, 'L');
         }
     }
@@ -219,28 +228,50 @@ public class Solution {
     private List<Integer> mergeAndUpload(int recordHolder, char recordType) {
         PlayerRecord pRecord = mapOfPlayerRecord.get(recordHolder);
         List<Integer> playerList;
+
+        //레코드 타입에 따라서 기록을 꺼내고
         if(recordType=='W') playerList = pRecord.getWinnerList();
         else playerList = pRecord.getLoserList();
 
-        if(visited.get(recordType)[recordHolder] ==1)
-            return playerList;
-
-        for(int player : playerList)
+        //이미 방문했다면 다 탐색해서 업데이트 한거니까 바로 리턴 해주고
+        if(visited.get(recordType)[recordHolder] !=1)
         {
-            playerList =  union(
-                playerList,
-                mergeAndUpload(player, recordType)//mapOfPlayerRecord.get(winner).getWinnerList()
-            );
+            //방문 안했다면 레코드를 꺼내서 다시 Recursive하게 들어간다. 
+            for(int player : playerList)
+            {
+                //리턴된 리스트는 내 상위에 있는 모든 선수들의 기록을 꺼내 온것과 같다. 합쳐준다.
+                playerList =  union(
+                    playerList,
+                    mergeAndUpload(player, recordType)//mapOfPlayerRecord.get(winner).getWinnerList()
+                );
+            }
+            
+            //레코드 타입에 맞게 저장하고
+            if(recordType=='W')
+                pRecord.setWinnerList(playerList);
+            else
+                pRecord.setLoserList(playerList);
+
+            //다 탐색해서 업데이트한 곳에는 방문 체크를 해주고
+            visited.get(recordType)[recordHolder]=1;
         }
-        
-        if(recordType=='W')
-            pRecord.setWinnerList(playerList);
-        else
-            pRecord.setLoserList(playerList);
-
-        visited.get(recordType)[recordHolder]=1;
-
         return playerList;
+    }
+
+    private int getFixedRankIteration(int n) {
+        int answer =0;
+        int rankFixingMatchSize = n-1;
+
+        for(int playerIndex=1; playerIndex <= n ; playerIndex++){
+            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            //System.out.println(pRecord);
+            if(pRecord.matchNumbers() == rankFixingMatchSize)
+            {
+                //순위가 결정되었다!
+                answer++;
+            }
+        }
+        return answer;
     }
 
     public class PlayerRecord{
