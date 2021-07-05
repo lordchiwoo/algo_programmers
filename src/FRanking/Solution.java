@@ -44,6 +44,9 @@ public class Solution {
         // 제거를 쉽게 하려면 리스트 순회가 아니라 맵으로 저장해서 있으면 지우는 방향으로...
         // - 경기결과를 1회 순회 하고 나서 정해진 순위 노드를 기준으로 트리...를 구성해 나가는 느낌적인 느낌.
         // 데이터 구조가 엄청 복잡해지겠다.
+        // 다 푼 뒤 추가 - 돌려보니 암묵적인 패배케이스 (A가 B에게 지고 C에게 이겼으면 C는 B에게 무조건 진다)를 처리 하지 않으면 N-1 경기결과를 처리할 수 없음.
+        // 변화가 없을때까지 승리한노드들의 승리한 노드를 가져오고 패배한 노드의 패배한 노드를 가져오도록 프로그램을 수정...했는데 푸느라 급급해서 무식한 방법으로 돌렸다.
+        // 그리고 어차피 이렇게 되면 서브노드서브노드 갈필요 없이 그냥 다 가져온다음에 매치 케이스가 n-1인지 모두 빙빙 돌면서 검사해도 되겠다...ㅜ
 
         //그래프 생성
         mapOfPlayerRecord = buildMapOfPlayerRecord(results);
@@ -56,11 +59,32 @@ public class Solution {
             if(mapOfPlayerRecord.get(i)==null) mapOfPlayerRecord.put(i, new PlayerRecord(i));
         }
 
-        answer = getFixedRankRecursive(leaguePlayer);
+        //리커시브하게 승리자 패배자 노드들 별로 리그전을 돌린것처럼 해서 W-1, L-1회 승리한 선수를 찾는 로직
+        //answer = getFixedRankRecursive(leaguePlayer);
+
+        //어차피 다 긁어모았으니 N-1회 기록을 가지고 있는지 순회한다면
+        answer = getFixedRankIteration(n);
         return answer;
     }
 
     
+    private int getFixedRankIteration(int n) {
+        int answer =0;
+        int rankFixingMatchSize = n-1;
+
+        for(int playerIndex=1; playerIndex <= n ; playerIndex++){
+            PlayerRecord pRecord = mapOfPlayerRecord.get(playerIndex);
+            //System.out.println(pRecord);
+            if(pRecord.matchNumbers() == rankFixingMatchSize)
+            {
+                //순위가 결정되었다!
+                answer++;
+            }
+        }
+        return answer;
+    }
+
+
     //n-1회 경기 결과를 가진 기록을 찾는다(순위 확정)
     //기록의 상위 리스트에 있는 노드들은 상위 노드만 남기고
     //기록의 하위 리스트에 있는 노드들은 하위 노드만 남긴다.
