@@ -4,8 +4,8 @@
 //import DWordTransform.Solution;
 //import EMostDistantNode.Solution;
 //import FRanking.Solution;
-import GImmigration.Solution;
-//import HNumberOfRooms.Solution;
+//import GImmigration.Solution;
+import HNumberOfRooms.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -59,15 +59,15 @@ public class App {
         //     System.out.println("Answer is " + answer + "  expected answer is " + answers[i]);
         // }
         //GImmigration
-        int[] times = {7,10,11,12,61};
-        long n = 91;//  
-        long answer = solved.solution(n, times);
-        System.out.println("Answer is " + answer + "  expected answer is " + 28);
+        // int[] times = {7,10,11,12,61};
+        // long n = 91;//  
+        // long answer = solved.solution(n, times);
+        // System.out.println("Answer is " + answer + "  expected answer is " + 28);
         
         //HNumberOfRooms
-        // int[] arrows = {   6, 5, 2, 7, 1, 4, 2, 4, 6   };
-        // long answer = solved.solution(arrows);
-        // System.out.println("Answer is " + answer + "  expected answer is " + 28);
+        int[] arrows = {6, 5, 2, 7, 1, 4, 2, 4, 6   };
+        long answer = solved.solution(arrows);
+        System.out.println("Answer is " + answer + "  expected answer is " + 28);
     }
 }
 /*

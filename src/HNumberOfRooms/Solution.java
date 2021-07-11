@@ -71,6 +71,7 @@ public class Solution {
             String movedPositionCode = prevPoint.movedPositionCode(direction);
             boolean isLineExisted = prevPoint.lineTo[direction] == 1;
 
+            //TODO edge case : {   6, 5, 2, 7, 1, 4, 2, 4, 6   }; 일 때 Unit Square를 4등분 하는 이등변 삼각형이 생기므로 1,3,5,7 일때 +0.5, +0.5 노드를 추가하고 In Out방향을 같이 기록한다.
             if(isLineExisted == false)
             {
                 prevPoint.lineTo[direction] = 1;
@@ -83,7 +84,7 @@ public class Solution {
             }
             prevPoint = drawnCoordinates.get(movedPositionCode);
             int directionFrom = (direction +4 ) % 8;
-            prevPoint.lineTo[directionFrom] = 1;
+            prevPoint.lineTo[directionFrom] = 1; //선을 반대로 긋는 경우도 감안해서 처리하려면 어디서 왔는지도 기록한다
         }
         return answer;
     }
