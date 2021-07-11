@@ -34,7 +34,7 @@ n	times	return
 ※ 공지 - 2019년 9월 4일 문제에 새로운 테스트 케이스를 추가하였습니다. 도움을 주신 weaver9651 님께 감사드립니다.
 */
 public class Solution {
-    public long solution(long n, int[] times) {
+    public long solution(int n, int[] times) {
         long answer = 0;
         // 생각의 흐름  - 최소공배수를 먼저 구하고 최소공배수까지 각각의 심사관이 몇명 처리 하는지 계산하면
         // (int) (N+1 /  최소공배수)   + 나머지 처리에 걸리는 시간 을 하면 되지 않을까?
@@ -51,15 +51,15 @@ public class Solution {
         //System.out.println(LCM); // {7,10,11,12,61}; => 281820 //this is 노답
 
         java.util.Arrays.sort(times); 
-        long min=n/times.length * times[0];
-        long max=n/times.length * times[times.length-1];
+        long min=(long)(n/times.length) * (long)times[0];
+        long max=(long)(n/times.length) * (long)times[times.length-1];
 
         long mid;
         
         while(min<=max)
         {
             mid = (min+max)/2;
-            long processCnt = processImmigration(mid, times);
+            int processCnt = processImmigration(mid, times);
 
             if(processCnt<n)
                 min = mid+1;
@@ -72,14 +72,16 @@ public class Solution {
         return answer;
     }
 
-    private long processImmigration(long mid, int[] times) {
+    private int processImmigration(long mid, int[] times) {
         long processedTraveler = 0;
         for(int time : times)
         {
-            processedTraveler+=mid/time;
+            processedTraveler += mid/time;
         }
         System.out.println( processedTraveler );
-        return processedTraveler;
+        if(processedTraveler > Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+        return (int)processedTraveler;
     }
 }
 
