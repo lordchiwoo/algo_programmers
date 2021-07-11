@@ -1,12 +1,5 @@
 package GImmigration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 //https://programmers.co.kr/learn/courses/30/lessons/43238
 /*
 문제 설명
@@ -41,7 +34,7 @@ n	times	return
 ※ 공지 - 2019년 9월 4일 문제에 새로운 테스트 케이스를 추가하였습니다. 도움을 주신 weaver9651 님께 감사드립니다.
 */
 public class Solution {
-    public long solution(int n, int[] times) {
+    public long solution(long n, int[] times) {
         long answer = 0;
         // 생각의 흐름  - 최소공배수를 먼저 구하고 최소공배수까지 각각의 심사관이 몇명 처리 하는지 계산하면
         // (int) (N+1 /  최소공배수)   + 나머지 처리에 걸리는 시간 을 하면 되지 않을까?
@@ -50,31 +43,67 @@ public class Solution {
         // 20분이 되었을 때, 두 번째 심사대가 비지만 6번째 사람이 그곳에서 심사를 받지 않고 1분을 더 기다린 후에 첫 번째 심사대에서 심사를 받으면 28분에 모든 사람의 심사가 끝납니다.
         // 이 부분 처리가 핵심인듯.
 
+        //int LCM = times[0];
+        //for(int i=1; i<times.length;i++)
+        //{
+        //    LCM = lcm(LCM, times[i]);
+        //}
+        //System.out.println(LCM); // {7,10,11,12,61}; => 281820 //this is 노답
+
+        java.util.Arrays.sort(times); 
+        long min=n/times.length * times[0];
+        long max=n/times.length * times[times.length-1];
+
+        long mid;
+        
+        while(min<=max)
+        {
+            mid = (min+max)/2;
+            long processCnt = processImmigration(mid, times);
+
+            if(processCnt<n)
+                min = mid+1;
+            else{
+                max = mid-1;
+                answer = mid;
+            }
+        }
+
         return answer;
     }
+
+    private long processImmigration(long mid, int[] times) {
+        long processedTraveler = 0;
+        for(int time : times)
+        {
+            processedTraveler+=mid/time;
+        }
+        System.out.println( processedTraveler );
+        return processedTraveler;
+    }
 }
+
 /*
-테스트 1 〉	통과 (0.76ms, 52.2MB)
-테스트 2 〉	통과 (1.27ms, 52.5MB)
-테스트 3 〉	통과 (3.66ms, 52.5MB)
-테스트 4 〉	통과 (1.10ms, 51.9MB)
-테스트 5 〉	통과 (12.47ms, 55.3MB)
-테스트 6 〉	통과 (25.26ms, 56.6MB)
-테스트 7 〉	통과 (86.87ms, 70.5MB)
-테스트 8 〉	통과 (135.91ms, 75.4MB)
-테스트 9 〉	통과 (169.12ms, 102MB)
-테스트 10 〉	통과 (136.68ms, 77.4MB)
+테스트 1 〉	통과 (0.69ms, 52.2MB)
+테스트 2 〉	통과 (1.22ms, 52.7MB)
+테스트 3 〉	통과 (3.55ms, 54.2MB)
+테스트 4 〉	통과 (106.97ms, 59.4MB)
+테스트 5 〉	통과 (98.38ms, 60.2MB)
+테스트 6 〉	통과 (119.88ms, 60.1MB)
+테스트 7 〉	통과 (131.40ms, 59.4MB)
+테스트 8 〉	통과 (141.55ms, 60.2MB)
+테스트 9 〉	통과 (1.95ms, 52MB)
+    int gcd(int a, int b){
+        while(b!=0){
+            int r = a%b;
+            a= b;
+            b= r;
+        }
+        return a;
+    }
+    
+    int lcm(int a, int b){
+        return a * b / gcd(a,b);
+    }
 
-
-최종
-테스트 1 〉	통과 (0.42ms, 53.2MB)
-테스트 2 〉	통과 (0.68ms, 52.1MB)
-테스트 3 〉	통과 (3.32ms, 53.1MB)
-테스트 4 〉	통과 (0.75ms, 53.4MB)
-테스트 5 〉	통과 (9.16ms, 53.9MB)
-테스트 6 〉	통과 (16.86ms, 54.4MB)
-테스트 7 〉	통과 (48.25ms, 61.8MB)
-테스트 8 〉	통과 (77.37ms, 70.8MB)
-테스트 9 〉	통과 (95.66ms, 74MB)
-테스트 10 〉	통과 (130.83ms, 71.5MB)
 */
