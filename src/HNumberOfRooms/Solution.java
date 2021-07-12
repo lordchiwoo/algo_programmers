@@ -66,40 +66,65 @@ public class Solution {
         Point prevPoint = new Point();
         drawnCoordinates.put(prevPoint.positionCode(), prevPoint);
 
-        for(int direction : arrows)
-        {
-            String movedPositionCode = prevPoint.movedPositionCode(direction);
-            boolean isLineExisted = prevPoint.lineTo[direction] == 1;
+        for (int directionTo : arrows) {
+            int directionFrom = (directionTo + 4) % 8; // 선을 반대로 긋는 경우도 감안해서 처리하려면 어디서 왔는지도 기록한다
+            String movedPositionCode = prevPoint.movedPositionCode(directionTo);
+            boolean isLineExisted = prevPoint.lineTo[directionTo] == 1;
+            // TODO edge case : { 6, 5, 2, 7, 1, 4, 2, 4, 6 }; 일 때 Unit Square를 4등분 하는 이등변
+            // 삼각형이 생기므로 1,3,5,7 일때 +0.5, +0.5 노드를 추가하고 In Out방향을 같이 기록한다.
+            if (isLineExisted == false) {
+                boolean isNextPointExisted = drawnCoordinates.containsKey(movedPositionCode);
+                Integer[] diagonalDirection = { 1, 3, 5, 7 };
+                int directionDiagonalRight = (directionTo + 2) % 8; // 대각선인 경우 직각으로 교차하는 선
 
-            //TODO edge case : {   6, 5, 2, 7, 1, 4, 2, 4, 6   }; 일 때 Unit Square를 4등분 하는 이등변 삼각형이 생기므로 1,3,5,7 일때 +0.5, +0.5 노드를 추가하고 In Out방향을 같이 기록한다.
-            if(isLineExisted == false)
-            {
-                prevPoint.lineTo[direction] = 1;
-                if(drawnCoordinates.containsKey(movedPositionCode)){
-                    answer++;
+                if (Arrays.asList(diagonalDirection).contains(directionTo)) {
+                    String passingPositionCode = prevPoint.movedPositionCode(directionTo, true);
+                    boolean isDiagonalHalfPointExisted = drawnCoordinates.containsKey(passingPositionCode);
+
+                    if (isDiagonalHalfPointExisted == false) {
+                        drawnCoordinates.put(passingPositionCode, new Point(passingPositionCode));
+                    }
+
+                    Point diagonalPassingPoint = drawnCoordinates.get(passingPositionCode);
+                    boolean isRightDiagonalExisted = diagonalPassingPoint.lineTo[directionDiagonalRight] ==1;
+
+                    System.out.println(" -> [" + passingPositionCode + "] -> " + directionTo + " -> " + directionDiagonalRight + " -> " + diagonalPassingPoint + " => " + answer);
+                    if (isRightDiagonalExisted) {
+                        answer++;
+                        System.out.println(answer);
+                    }
+
+                    diagonalPassingPoint.lineTo[directionTo] = 1;
+                    diagonalPassingPoint.lineTo[directionFrom] = 1; // 선을 반대로 긋는 경우도 감안해서 처리하려면 어디서 왔는지도 기록한다
                 }
-                else{
+
+                prevPoint.lineTo[directionTo] = 1;
+                if (isNextPointExisted) {
+                    answer++;
+                } else {
                     drawnCoordinates.put(movedPositionCode, new Point(movedPositionCode));
                 }
+
+                System.out.println(prevPoint + " -> " + directionTo + " -> [" + movedPositionCode + "] => " + answer);
             }
             prevPoint = drawnCoordinates.get(movedPositionCode);
-            int directionFrom = (direction +4 ) % 8;
-            prevPoint.lineTo[directionFrom] = 1; //선을 반대로 긋는 경우도 감안해서 처리하려면 어디서 왔는지도 기록한다
+            prevPoint.lineTo[directionFrom] = 1; // 선을 반대로 긋는 경우도 감안해서 처리하려면 어디서 왔는지도 기록한다
         }
         return answer;
     }
 
     class Point {
-        private int[][] movingCoords = { { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, };
+        private int[][] movingCoords = { { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 },
+                { -1, -1 }, };
 
-        int x, y;
+        float x, y;
         int[] lineTo;
 
         Point() {
             this(0, 0);
         }
 
-        Point(int xVal, int yVal) {
+        Point(float xVal, float yVal) {
             x = xVal;
             y = yVal;
             lineTo = new int[8];
@@ -109,15 +134,15 @@ public class Solution {
             this(0, 0);
             String[] positionStr = positionCode.split(",");
 
-            this.setX(Integer.parseInt(positionStr[0]));
-            this.setY(Integer.parseInt(positionStr[1]));
+            this.setX(Float.parseFloat(positionStr[0]));
+            this.setY(Float.parseFloat(positionStr[1]));
         }
 
-        void setX(int xVal) {
+        void setX(float xVal) {
             x = xVal;
         }
 
-        void setY(int yVal) {
+        void setY(float yVal) {
             y = yVal;
         }
 
@@ -125,36 +150,31 @@ public class Solution {
             return positionCode(x, y);
         }
 
-        String positionCode(int xVal, int yVal) {
-            return xVal + "," + yVal;
+        <T> String positionCode(T xVal, T yVal) {
+            return String.format("%.1f", (float) xVal) + ", " + String.format("%.1f", (float) yVal);
         }
 
-        Point move(int direction)
-        {
-            int movedX = x;
-            int movedY = y;
-            int[] movingCoord = movingCoords[direction];
-            movedX += movingCoord[0];
-            movedY += movingCoord[1];
-
-            return new Point(movedX, movedY);
+        String movedPositionCode(int direction) {
+            return movedPositionCode(direction, false);
         }
 
-        String movedPositionCode(int direction)
-        {
-            int movedX = x;
-            int movedY = y;
+        String movedPositionCode(int direction, boolean halfMove) {
+            float coefficient = 1;
+            if (halfMove)
+                coefficient = 0.5f;
+            float movedX = x;
+            float movedY = y;
             int[] movingCoord = movingCoords[direction];
-            movedX += movingCoord[0];
-            movedY += movingCoord[1];
+            movedX += movingCoord[0] * coefficient;
+            movedY += movingCoord[1] * coefficient;
 
             return positionCode(movedX, movedY);
         }
 
         @Override
         public String toString() {
-            
-            return "["+x + ", " + y + "]" + Arrays.toString(lineTo);
+
+            return "[" + x + ", " + y + "]" + Arrays.toString(lineTo);
         }
     }
 }

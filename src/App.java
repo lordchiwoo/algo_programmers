@@ -65,7 +65,7 @@ public class App {
         // System.out.println("Answer is " + answer + "  expected answer is " + 28);
         
         //HNumberOfRooms
-        int[] arrows = {6, 5, 2, 7, 1, 4, 2, 4, 6   };
+        int[] arrows = {6, 5, 2, 7, 1, 4, 2, 4, 6};//{6, 5, 2, 7, 1, 4, 2, 4, 6   };
         long answer = solved.solution(arrows);
         System.out.println("Answer is " + answer + "  expected answer is " + 28);
     }
