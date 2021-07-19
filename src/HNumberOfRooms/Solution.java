@@ -1,6 +1,5 @@
 package HNumberOfRooms;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -189,7 +188,7 @@ public class Solution {
         }
 
         // Overloading
-        <T> String positionCode(T xVal, T yVal) {
+        String positionCode(float xVal, float yVal) {
             return String.format("%.1f", (float) xVal) + ", " + String.format("%.1f", (float) yVal);
         }
 
@@ -230,6 +229,14 @@ public class Solution {
 }
 
 /*
-
+테스트 1 〉	통과 (29.38ms, 53.5MB)
+테스트 2 〉	통과 (68.51ms, 55.1MB)
+테스트 3 〉	통과 (93.09ms, 66.6MB)
+테스트 4 〉	통과 (152.95ms, 73.7MB)
+테스트 5 〉	통과 (433.34ms, 93.5MB)
+테스트 6 〉	통과 (896.04ms, 154MB)
+테스트 7 〉	통과 (336.30ms, 89.4MB)
+테스트 8 〉	통과 (1071.75ms, 202MB)
+테스트 9 〉	통과 (1069.65ms, 222MB)
 
 */
