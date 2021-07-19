@@ -42,14 +42,10 @@ public class Solution {
             boolean keyMatching = true;
             for (int offsetH = minOffset; offsetH <= maxOffset; offsetH++) {
                 for (int offsetV = minOffset; offsetV <= maxOffset; offsetV++) {
-
-                    System.out.println("[" + offsetH + ", " + offsetV + "] R" + rotation);
-                    if (offsetH == 0 && offsetV == 1 && rotation == 180)
-                        keyMatching = false;
+                    //System.out.println("[" + offsetH + ", " + offsetV + "] R" + rotation);
                     keyMatching = isMatchKey(newKey, myLock, offsetH, offsetV);
 
                     if (keyMatching) {
-
                         return true;
                     }
                 }
@@ -62,25 +58,23 @@ public class Solution {
     }
 
     private boolean isMatchKey(Key newKey, Lock myLock, int offsetH, int offsetV) {
-        boolean matched = true;
         for (int y = 0; y < myLock.size; y++) {
             for (int x = 0; x < myLock.size; x++) {
-                int keyStoneX = x - offsetH;
+                //offset 위치에 Key 0,0을 위치 시키면 lock의 x,y에 겹치는 Key 좌표를 아래와 같이 추출한다.
+                int keyStoneX = x - offsetH; 
                 int keyStoneY = y - offsetV;
 
+                //해당 좌표의 데이터를 꺼내서
                 int keyStone = newKey.getXY(keyStoneX, keyStoneY);
                 int lockStone = myLock.getXY(x, y);
 
-                // System.out.print( keyStone +"/" +lockStone +" " );
+                //맞물리지 않으면 실패
                 if (1 != keyStone + lockStone) {
-                    matched = false;
-
+                    return false;
                 }
             }
-            // System.out.println(" ");
-
         }
-        return matched;
+        return true;
     }
 
     class Arr2d {
@@ -160,42 +154,42 @@ public class Solution {
 }
 
 /*
-테스트 1 〉	통과 (20.39ms, 53.5MB)
-테스트 2 〉	통과 (15.42ms, 52.8MB)
-테스트 3 〉	통과 (35.08ms, 53MB)
-테스트 4 〉	통과 (16.06ms, 52.7MB)
-테스트 5 〉	통과 (52.48ms, 53MB)
-테스트 6 〉	통과 (51.38ms, 54.8MB)
-테스트 7 〉	통과 (43.81ms, 52.5MB)
-테스트 8 〉	통과 (78.42ms, 53.9MB)
-테스트 9 〉	통과 (88.77ms, 53.9MB)
-테스트 10 〉	통과 (103.56ms, 53.9MB)
-테스트 11 〉	통과 (110.52ms, 53.9MB)
-테스트 12 〉	통과 (13.90ms, 52.3MB)
-테스트 13 〉	통과 (28.80ms, 53.3MB)
-테스트 14 〉	통과 (23.86ms, 53.8MB)
-테스트 15 〉	통과 (28.16ms, 53MB)
-테스트 16 〉	통과 (75.85ms, 53.6MB)
-테스트 17 〉	통과 (15.83ms, 53MB)
-테스트 18 〉	통과 (54.34ms, 54.7MB)
-테스트 19 〉	통과 (19.19ms, 52.6MB)
-테스트 20 〉	통과 (118.18ms, 53.4MB)
-테스트 21 〉	통과 (35.37ms, 53.4MB)
-테스트 22 〉	통과 (48.90ms, 53.2MB)
-테스트 23 〉	통과 (35.16ms, 53MB)
-테스트 24 〉	통과 (28.40ms, 52.4MB)
-테스트 25 〉	통과 (109.93ms, 53.3MB)
-테스트 26 〉	통과 (94.26ms, 54.5MB)
-테스트 27 〉	통과 (125.37ms, 53.8MB)
-테스트 28 〉	통과 (43.30ms, 53.4MB)
-테스트 29 〉	통과 (34.94ms, 53MB)
-테스트 30 〉	통과 (53.68ms, 52.3MB)
-테스트 31 〉	통과 (95.94ms, 53.7MB)
-테스트 32 〉	통과 (105.64ms, 54.4MB)
-테스트 33 〉	통과 (46.71ms, 54MB)
-테스트 34 〉	통과 (18.60ms, 53.6MB)
-테스트 35 〉	통과 (30.99ms, 53.9MB)
-테스트 36 〉	통과 (30.83ms, 52.7MB)
-테스트 37 〉	통과 (26.77ms, 52.7MB)
-테스트 38 〉	통과 (20.50ms, 52.7MB)
+테스트 1 〉	통과 (0.86ms, 52.2MB)
+테스트 2 〉	통과 (0.65ms, 52.1MB)
+테스트 3 〉	통과 (2.96ms, 52.3MB)
+테스트 4 〉	통과 (0.64ms, 51.8MB)
+테스트 5 〉	통과 (3.41ms, 52.5MB)
+테스트 6 〉	통과 (5.94ms, 52.9MB)
+테스트 7 〉	통과 (5.89ms, 52.1MB)
+테스트 8 〉	통과 (4.80ms, 52MB)
+테스트 9 〉	통과 (1.70ms, 51.9MB)
+테스트 10 〉	통과 (10.72ms, 53MB)
+테스트 11 〉	통과 (15.61ms, 52.3MB)
+테스트 12 〉	통과 (0.63ms, 52.7MB)
+테스트 13 〉	통과 (0.87ms, 53.1MB)
+테스트 14 〉	통과 (1.21ms, 52.7MB)
+테스트 15 〉	통과 (1.58ms, 68MB)
+테스트 16 〉	통과 (2.73ms, 52.1MB)
+테스트 17 〉	통과 (0.80ms, 51.8MB)
+테스트 18 〉	통과 (7.16ms, 52.7MB)
+테스트 19 〉	통과 (0.99ms, 52.8MB)
+테스트 20 〉	통과 (9.18ms, 53MB)
+테스트 21 〉	통과 (2.33ms, 52.3MB)
+테스트 22 〉	통과 (1.17ms, 53.1MB)
+테스트 23 〉	통과 (1.22ms, 51.9MB)
+테스트 24 〉	통과 (1.59ms, 52.2MB)
+테스트 25 〉	통과 (21.36ms, 52.6MB)
+테스트 26 〉	통과 (3.79ms, 52.3MB)
+테스트 27 〉	통과 (6.48ms, 52.9MB)
+테스트 28 〉	통과 (1.88ms, 52.1MB)
+테스트 29 〉	통과 (1.37ms, 52.1MB)
+테스트 30 〉	통과 (1.84ms, 51.7MB)
+테스트 31 〉	통과 (4.64ms, 52.8MB)
+테스트 32 〉	통과 (2.69ms, 52.3MB)
+테스트 33 〉	통과 (1.30ms, 52.7MB)
+테스트 34 〉	통과 (0.66ms, 52.2MB)
+테스트 35 〉	통과 (0.94ms, 51.4MB)
+테스트 36 〉	통과 (1.29ms, 53.6MB)
+테스트 37 〉	통과 (0.79ms, 52.7MB)
+테스트 38 〉	통과 (0.93ms, 52.7MB)
  */
