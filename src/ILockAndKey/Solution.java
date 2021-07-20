@@ -31,7 +31,7 @@ public class Solution {
         boolean answer = true;
         int keySize = key.length;
         int lockSize = lock.length;
-        Lock myLock = new Lock(lock);
+        //Lock myLock = new Lock(lock);
 
         // key 0,0 좌표의 이동 가능 범위 : (-1*(keySize-1)) ~ (lockSize-1)
         int minOffset = 1 - keySize; // -1 * keySize-1;
@@ -43,7 +43,8 @@ public class Solution {
             for (int offsetH = minOffset; offsetH <= maxOffset; offsetH++) {
                 for (int offsetV = minOffset; offsetV <= maxOffset; offsetV++) {
                     //System.out.println("[" + offsetH + ", " + offsetV + "] R" + rotation);
-                    keyMatching = isMatchKey(newKey, myLock, offsetH, offsetV);
+                    //keyMatching = isMatchKey(newKey, myLock, offsetH, offsetV);
+                    keyMatching = isMatchKey(newKey.data, lock, offsetH, offsetV);
 
                     if (keyMatching) {
                         return true;
@@ -63,10 +64,34 @@ public class Solution {
                 //offset 위치에 Key 0,0을 위치 시키면 lock의 x,y에 겹치는 Key 좌표를 아래와 같이 추출한다.
                 int keyStoneX = x - offsetH; 
                 int keyStoneY = y - offsetV;
-
+                
+                int keyStone = 0;
                 //해당 좌표의 데이터를 꺼내서
-                int keyStone = newKey.getXY(keyStoneX, keyStoneY);
+                if (!( (x < 0 || x >= newKey.size) ||  (y < 0 || y >= newKey.size) ))
+                                keyStone = newKey.getXY(keyStoneX, keyStoneY);
                 int lockStone = myLock.getXY(x, y);
+
+                //맞물리지 않으면 실패
+                if (1 != keyStone + lockStone) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    private boolean isMatchKey(int[][] newKey, int[][] myLock, int offsetH, int offsetV) {
+        for (int y = 0; y < myLock.length; y++) {
+            for (int x = 0; x < myLock.length; x++) {
+                //offset 위치에 Key 0,0을 위치 시키면 lock의 x,y에 겹치는 Key 좌표를 아래와 같이 추출한다.
+                int keyStoneX = x - offsetH; 
+                int keyStoneY = y - offsetV;
+                
+                int keyStone = 0;
+                //해당 좌표의 데이터를 꺼내서
+                if (  !( (keyStoneX < 0 || keyStoneX >= newKey.length) ||  (keyStoneY < 0 || keyStoneY >= newKey.length) ))
+                                keyStone = newKey[keyStoneX][keyStoneY];
+                int lockStone = myLock[x][y];
 
                 //맞물리지 않으면 실패
                 if (1 != keyStone + lockStone) {
@@ -154,6 +179,7 @@ public class Solution {
 }
 
 /*
+클래스 Access
 테스트 1 〉	통과 (0.86ms, 52.2MB)
 테스트 2 〉	통과 (0.65ms, 52.1MB)
 테스트 3 〉	통과 (2.96ms, 52.3MB)
@@ -192,4 +218,44 @@ public class Solution {
 테스트 36 〉	통과 (1.29ms, 53.6MB)
 테스트 37 〉	통과 (0.79ms, 52.7MB)
 테스트 38 〉	통과 (0.93ms, 52.7MB)
+
+Array access
+테스트 1 〉	통과 (0.55ms, 52.6MB)
+테스트 2 〉	통과 (1.65ms, 51.9MB)
+테스트 3 〉	통과 (1.59ms, 52.4MB)
+테스트 4 〉	통과 (0.50ms, 54MB)
+테스트 5 〉	통과 (0.73ms, 53MB)
+테스트 6 〉	통과 (3.25ms, 51.5MB)
+테스트 7 〉	통과 (5.68ms, 51.9MB)
+테스트 8 〉	통과 (1.53ms, 52.2MB)
+테스트 9 〉	통과 (1.01ms, 52.2MB)
+테스트 10 〉	통과 (5.01ms, 53.2MB)
+테스트 11 〉	통과 (11.36ms, 52.7MB)
+테스트 12 〉	통과 (0.44ms, 53MB)
+테스트 13 〉	통과 (0.53ms, 52.8MB)
+테스트 14 〉	통과 (0.62ms, 51.9MB)
+테스트 15 〉	통과 (0.98ms, 52.3MB)
+테스트 16 〉	통과 (1.24ms, 53.1MB)
+테스트 17 〉	통과 (0.54ms, 52.2MB)
+테스트 18 〉	통과 (1.90ms, 52.6MB)
+테스트 19 〉	통과 (0.57ms, 52.3MB)
+테스트 20 〉	통과 (6.35ms, 53.2MB)
+테스트 21 〉	통과 (1.03ms, 52.5MB)
+테스트 22 〉	통과 (0.90ms, 52.9MB)
+테스트 23 〉	통과 (0.70ms, 52.9MB)
+테스트 24 〉	통과 (0.83ms, 52.5MB)
+테스트 25 〉	통과 (6.79ms, 52.8MB)
+테스트 26 〉	통과 (1.25ms, 52.3MB)
+테스트 27 〉	통과 (4.79ms, 52MB)
+테스트 28 〉	통과 (0.79ms, 51.9MB)
+테스트 29 〉	통과 (0.75ms, 52MB)
+테스트 30 〉	통과 (1.01ms, 52.4MB)
+테스트 31 〉	통과 (3.04ms, 52.1MB)
+테스트 32 〉	통과 (1.86ms, 53.1MB)
+테스트 33 〉	통과 (0.82ms, 52.7MB)
+테스트 34 〉	통과 (0.47ms, 52MB)
+테스트 35 〉	통과 (0.59ms, 52.9MB)
+테스트 36 〉	통과 (0.68ms, 52.4MB)
+테스트 37 〉	통과 (0.49ms, 53.1MB)
+테스트 38 〉	통과 (0.62ms, 51.6MB)
  */
