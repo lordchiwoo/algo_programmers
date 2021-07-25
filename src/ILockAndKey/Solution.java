@@ -65,10 +65,7 @@ public class Solution {
                 int keyStoneX = x - offsetH; 
                 int keyStoneY = y - offsetV;
                 
-                int keyStone = 0;
-                //해당 좌표의 데이터를 꺼내서
-                if (!( (x < 0 || x >= newKey.size) ||  (y < 0 || y >= newKey.size) ))
-                                keyStone = newKey.getXY(keyStoneX, keyStoneY);
+                int keyStone = newKey.getXY(keyStoneX, keyStoneY);
                 int lockStone = myLock.getXY(x, y);
 
                 //맞물리지 않으면 실패
@@ -84,7 +81,7 @@ public class Solution {
         for (int y = 0; y < myLock.length; y++) {
             for (int x = 0; x < myLock.length; x++) {
                 //offset 위치에 Key 0,0을 위치 시키면 lock의 x,y에 겹치는 Key 좌표를 아래와 같이 추출한다.
-                int keyStoneX = x - offsetH; 
+                int keyStoneX = x - offsetH;
                 int keyStoneY = y - offsetV;
                 
                 int keyStone = 0;
