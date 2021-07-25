@@ -1,3 +1,18 @@
+import JPillarAndBeam.Solution;
+import java.util.Arrays;
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        Solution solved = new Solution();
+        
+        //JPillarAndBeam
+        int n = 5;
+        int[][] buildFrame = {{1,0,0,1},{1,1,1,1},{2,1,0,1},{2,2,1,1},{5,0,0,1},{5,1,0,1},{4,2,1,1},{3,2,1,1}};
+        int[][] answer = solved.solution(n, buildFrame);
+        System.out.println("Answer is " + Arrays.toString(answer) + "  expected answer is " + 28);
+    }
+}
+/*
 //import Aprinter.Solution;
 //import BtargetNumber.*;
 //import CNetwork.Solution;
@@ -6,7 +21,7 @@
 //import FRanking.Solution;
 //import GImmigration.Solution;
 //import HNumberOfRooms.Solution;
-import ILockAndKey.Solution;
+//import ILockAndKey.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -76,12 +91,11 @@ public class App {
         //int[][] lock = {{1, 1, 1}, {1, 1, 0}, {1, 0, 1}};//{6, 5, 2, 7, 1, 4, 2, 4, 6   };
         //int[][] key = {{1, 0, 0}, {0, 1, 0}, {0, 0, 0}};
         //int[][] lock = {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 0}};
-        int[][] key = {{1, 1, 1}, {1, 1, 1}, {1, 1, 0}};
-        int[][] lock = {{1, 1, 1, 1}, {0, 0, 0, 1}, {0, 0, 0, 1}, {0, 0, 0, 1}};
-        boolean answer = solved.solution(key,lock);
-        System.out.println("Answer is " + answer + "  expected answer is " + 28);
+        // int[][] key = {{1, 1, 1}, {1, 1, 1}, {1, 1, 0}};
+        // int[][] lock = {{1, 1, 1, 1}, {0, 0, 0, 1}, {0, 0, 0, 1}, {0, 0, 0, 1}};
+        // boolean answer = solved.solution(key,lock);
+        // System.out.println("Answer is " + answer + "  expected answer is " + 28);
     }
 }
-/*
 
 */
