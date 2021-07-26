@@ -71,190 +71,238 @@ n	build_frame	result
 */
 
 public class Solution {
-    int[] DIRECTION_NO = {0,0};
-    int[] DIRECTION_UP = {0,1};
-    int[] DIRECTION_UR = {1,1};
-    int[] DIRECTION_RT = {1,0};
-    int[] DIRECTION_DR = {1,-1};
-    int[] DIRECTION_DN = {0,-1};
-    int[] DIRECTION_DL = {-1,-1};
-    int[] DIRECTION_LT = {-1,0};
-    int[] DIRECTION_UL = {-1,1};
+    int[] DIRECTION_NO = { 0, 0 };  // 동일 위치
+    int[] DIRECTION_UP = { 0, 1 };  // 위
+    int[] DIRECTION_UR = { 1, 1 };  // 위   오른
+    int[] DIRECTION_RT = { 1, 0 };  //      오른
+    int[] DIRECTION_DR = { 1, -1 }; // 아래 오른
+    int[] DIRECTION_DN = { 0, -1 }; // 아래
+    int[] DIRECTION_DL = { -1, -1 };// 아래 왼
+    int[] DIRECTION_LT = { -1, 0 }; //      왼
+    int[] DIRECTION_UL = { -1, 1 }; // 위   왼
 
     Map<String, Boolean[]> building;
-    // 기둥 생성시 체크 : 해당좌표가 바닥이거나  아래에 기둥이 있거나 좌우로 보가 있는지 
+
+    // 기둥 생성시 체크 : 해당좌표가 바닥이거나 아래에 기둥이 있거나 좌우로 보가 있는지
     // 보 생성시 체크 : 생성되는 좌표 좌,우 아래쪽으로 기둥이 하나라도 있거나 좌우에 모두 보가 있는지
     // 기둥 삭제시 체크 : 해당 기둥을 제거하고 나서 해당 기둥에 의존하던 기둥(위) 과 보(좌우) 를 각각 삭제하고 다시 붙일수 있는지 검사
-    // 보 삭제시 체크 : 해당 보를 제거 하고 나서 해당 보에 의돈하던 기둥(좌위 우위)과 보(좌좌 우우)를 각각 삭제하고 다시 붙일 수 있는지 검사 
+    // 보 삭제시 체크 : 해당 보를 제거 하고 나서 해당 보에 의돈하던 기둥(좌위 우위)과 보(좌좌 우우)를 각각 삭제하고 다시 붙일 수 있는지
+    // 검사
     public int[][] solution(int n, int[][] build_frame) {
-        List<int[]> arrayList = new ArrayList<int[]>();
-
-        // building :  좌표 문자열, boolean 기둥(하,상), 보(좌,우) 존재여부
+        // building : 좌표 문자열, boolean 기둥,보 존재여부
         building = new HashMap<String, Boolean[]>();
 
-        for(int[] buildElement : build_frame)
-        {
-            int[] pos = {buildElement[0], buildElement[1]};
-            String posStr = pos2Str(pos);
-            Boolean[] posElement = building.containsKey(posStr)? building.get(posStr) : new Boolean[] {false, false};
-
+        for (int[] buildElement : build_frame) {
+            int[] pos = { buildElement[0], buildElement[1] };
             boolean isBeam = buildElement[2] == 1;
             boolean isbuild = buildElement[3] == 1;
-            if(isbuild){
-                if(isBeam){
-                    if(canBuildBeam(pos)){
-                        posElement[1] = true;
-                    }
-                }
-                else{
-                    if(canBuildPillar(pos)){
-                        posElement[0] = true;
-                    }                    
-                }
-            }
-            else{
-                if(isBeam && posElement[1]){
-                    posElement[1] = false;
-                    building.put(posStr, posElement);
-                    if(!canRemoveBeam(pos)){
-                        posElement[1] = true;
-                    }
-                }
-                else if(posElement[0]){
-                    posElement[0] = false;
-                    building.put(posStr, posElement);
-                    if(!canRemovePillar(pos)){
-                        posElement[0] = true;
-                    }           
-                }
-            }
-            
-            //System.out.println(Arrays.toString(posElement));
-            building.put(posStr, posElement);
+
+            // 처리해주세요 얍!
+            processFrame(pos, isBeam, isbuild);
         }
 
-        for(int i=0; i<=n ; i++){
-            for(int j=0; j<=n ; j++){
-                String posStr = pos2Str(new int[]{i,j});
-                if(building.containsKey(posStr)){
-                    Boolean[] posElement = building.get(posStr);
-                    if(posElement[0])
-                        arrayList.add(new int[]{i,j,0});
-                    if(posElement[1])
-                        arrayList.add(new int[]{i,j,1});
-                }
-            }
-        }
+        // x y 기둥/보 순으로 정렬해서 리스트에 넣고
+        List<int[]> arrayList = sortAndListingBuildingElement(n);
+        
 
-       
+        // 순서대로 꺼내서 리턴
         int[][] answer = new int[arrayList.size()][];
-        for (int i = 0; i < arrayList.size(); i++) {
-            answer[i] = arrayList.get(i);
-        }
+        answer = arrayList.toArray(answer);
+
         return answer;
     }
 
-    public boolean hasPillar(int[] pos)
-    {
-        return building.containsKey(pos2Str(pos))?building.get( pos2Str(pos) )[0] : false;
-    }
-    public boolean hasBeam(int[] pos)
-    {
-        return building.containsKey(pos2Str(pos))?building.get( pos2Str(pos) )[1] : false;
-    }
-    public boolean canRemovePillar(int[] pos)
-    {
-        int[] checkPos;
-        
-        checkPos = movedPos(pos, DIRECTION_UP );
-        if(hasPillar(checkPos) && !canBuildPillar(checkPos)) return false;
-        if(hasBeam(checkPos) && !canBuildBeam(checkPos)) return false;
-
-        checkPos = movedPos(pos, DIRECTION_UL );
-        if(hasBeam(checkPos) && !canBuildBeam(checkPos)) return false;
-
-        return true;
-    }
-    
-    public boolean canRemoveBeam(int[] pos)
-    {
-        int[] checkPos = movedPos(pos, DIRECTION_NO );
-        
-        if(hasPillar(checkPos) && !canBuildPillar(checkPos)) return false;
-        
-        checkPos = movedPos(pos, DIRECTION_LT );
-        if(hasBeam(checkPos) && !canBuildBeam(checkPos)) return false;
-
-        checkPos = movedPos(pos, DIRECTION_RT );
-        if(hasBeam(checkPos) && !canBuildBeam(checkPos)) return false;
-
-        if(hasPillar(checkPos) && !canBuildPillar(checkPos)) return false;
-
-        return true;
-    }
-
-    public String pos2Str(int[] pos){
+    public String pos2Str(int[] pos) {
         return pos[0] + "," + pos[1];
     }
-    public boolean canBuildPillar(int[] position)
-    {
-        if(position[1] ==0) return true;
 
-        int[] checkPos;
+    private void processFrame(int[] pos, boolean isBeam, boolean isbuild) {
+        String posStr = pos2Str(pos);
+        //요소가 없으면 잽싸게 만들어 넣고
+        if (!building.containsKey(posStr)) building.put(posStr, new Boolean[] { false, false });
 
-        //현재 좌표에 보가 있는지
-        checkPos = movedPos(position, DIRECTION_NO ); 
-        if(hasBeam(checkPos)) return true;
+        // 해당 좌표의 요소를 꺼내온다. (0=기둥 1=보)
+        Boolean[] posElement = building.get(posStr);
 
-        //현재 좌표 왼쪽으로 보가 있는지
-        checkPos = movedPos(position, DIRECTION_LT ); 
-        if(hasBeam(checkPos)) return true;
-
-        
-        //아래 좌표에 기둥이 있는지 
-        checkPos = movedPos(position, DIRECTION_DN ); 
-        if(hasPillar(checkPos)) return true;
-
-        return false;
+        if (isbuild) {// 생성
+            buildFrame(pos, isBeam, posElement);
+        }
+        else {// 삭제
+            removeFrame(pos, isBeam, posElement);
+        }
     }
-    public boolean canBuildBeam(int[] position)
-    {
-         int[] checkPos;
-        
-        //아래 좌표에 기둥이 있는지 
-        checkPos = movedPos(position, DIRECTION_DN ); 
-        if(hasPillar(checkPos)) return true;
 
-        //오른쪽 아래 좌표에 기둥이 있는지 
-        checkPos = movedPos(position, DIRECTION_DR ); 
-        if(hasPillar(checkPos)) return true;
-
-        //현재 좌표 왼쪽으로 보가 있는지
-        checkPos = movedPos(position, DIRECTION_LT ); 
-        if(hasBeam(checkPos) == false) return false;
-        //현재 좌표 오른쪽으로 보가 있는지(왼쪽으로 보가 있고)
-        checkPos = movedPos(position, DIRECTION_RT ); 
-        if(hasBeam(checkPos)) return true;
-
-
-        return false;
+    private List<int[]> sortAndListingBuildingElement(int n) {
+        List<int[]> arrayList = new ArrayList<int[]>();
+        for (int i = 0; i <= n; i++) { // x = 0~n
+            for (int j = 0; j <= n; j++) { // y = 0~n
+                String posStr = pos2Str(new int[] { i, j });
+                if (building.containsKey(posStr)) { // 좌표에 요소가 저장되어 있으면 검사
+                    Boolean[] posElement = building.get(posStr);
+                    if (posElement[0]) //기둥이 있으면 추가
+                        arrayList.add(new int[] { i, j, 0 });
+                    if (posElement[1]) //보가 있으면 추가
+                        arrayList.add(new int[] { i, j, 1 });
+                }
+            }
+        }
+        return arrayList;
     }
-    public int[] movedPos(int[] position, int[] move)
-    {
+
+    private void buildFrame(int[] pos, boolean isBeam, Boolean[] posElement) {
+
+        if (isBeam) {// 보
+            if (canBuildBeam(pos))
+                posElement[1] = true;
+        }
+        else {// 기둥
+            if (canBuildPillar(pos))
+                posElement[0] = true;
+        }
+    }
+
+    private void removeFrame(int[] pos, boolean isBeam, Boolean[] posElement) {
+        if (isBeam && posElement[1]) {// 보 && 가 있으면
+            posElement[1] = false;// 제거 하고
+            if (!canRemoveBeam(pos)) { // 제거된 상태가 유지 가능한 구조인지 체크
+                posElement[1] = true;// 불가능하면 다시 만들어준다
+            }
+        }
+        else if (posElement[0]) {// 기둥이 있으면
+            posElement[0] = false;// 제거 하고
+            if (!canRemovePillar(pos)) {// 제거된 상태가 유지 가능한 구조인지 체크
+                posElement[0] = true;// 불가능하면 다시 만들어준다
+            }
+        }
+    }
+
+    public boolean hasPillar(int[] pos) {
+        String checkPosStr = pos2Str(pos);
+        return building.containsKey(checkPosStr) ? building.get(checkPosStr)[0] : false;
+    }
+
+    public boolean hasBeam(int[] pos) {
+        String checkPosStr = pos2Str(pos);
+        return building.containsKey(checkPosStr) ? building.get(checkPosStr)[1] : false;
+    }
+
+    public int[] movedPos(int[] position, int[] move) {
         int[] movedPosition;
-        
-        movedPosition = position.clone(); 
-        movedPosition[0] +=move[0];
-        movedPosition[1] +=move[1];
+
+        //복사 후 좌표 이동
+        movedPosition = position.clone();
+        movedPosition[0] += move[0];
+        movedPosition[1] += move[1];
 
         return movedPosition;
     }
-    public String movedPosString(int[] position, int[] move)
-    {
-        return pos2Str( movedPos(position, move) );
+
+    public boolean canBuildBeam(int[] position) {
+        int[] checkPos;
+
+        checkPos = movedPos(position, DIRECTION_DN);
+        if (hasPillar(checkPos))// 아래 좌표에 기둥이 있는지
+            return true;
+
+        checkPos = movedPos(position, DIRECTION_DR);
+        if (hasPillar(checkPos))// 오른쪽 아래 좌표에 기둥이 있는지
+            return true;
+
+        checkPos = movedPos(position, DIRECTION_LT);
+        if (hasBeam(checkPos) == false)// 현재 좌표 왼쪽으로 보가 없으면 안됨 +
+            return false;// 앙대!
+
+        checkPos = movedPos(position, DIRECTION_RT);
+        if (hasBeam(checkPos))// 현재 좌표 오른쪽으로 보가 있는지(왼쪽으로 보가 있고)
+            return true;
+
+        return false;
+    }
+
+    public boolean canBuildPillar(int[] position) {
+        int[] checkPos;
+
+        if (position[1] == 0) // 바닥이면 항상 OK
+            return true;
+
+        checkPos = movedPos(position, DIRECTION_NO);
+        if (hasBeam(checkPos)) // 현재 좌표에 보가 있는지
+            return true;
+
+        checkPos = movedPos(position, DIRECTION_LT);
+        if (hasBeam(checkPos))// 현재 좌표 왼쪽으로 보가 있는지
+            return true;
+
+        checkPos = movedPos(position, DIRECTION_DN);
+        if (hasPillar(checkPos))// 아래 좌표에 기둥이 있는지
+            return true;
+
+        return false;
+    }
+
+    // 모두 현재 보 없이 다시 만들수 있는지 (유지 가능한 구조인지) 검사
+    public boolean canRemoveBeam(int[] pos) {
+        int[] checkPos;
+
+        checkPos = movedPos(pos, DIRECTION_NO);
+        if (hasPillar(checkPos) && !canBuildPillar(checkPos))// 현재 좌표에 기둥이 있고 기둥을 지을 수 있는지.
+            return false;
+
+        checkPos = movedPos(pos, DIRECTION_LT);
+        if (hasBeam(checkPos) && !canBuildBeam(checkPos))// 왼쪽에 보가 있으면 그 보를 만들 수 있는지
+            return false;
+
+        checkPos = movedPos(pos, DIRECTION_RT);
+        if (hasBeam(checkPos) && !canBuildBeam(checkPos))// 오른쪽에 보가 있으면 그 보를 만들 수 있는지
+            return false;
+        if (hasPillar(checkPos) && !canBuildPillar(checkPos))// 오른쪽에 기둥이 있으면 그 기둥을 만들 수 있는지
+            return false;
+
+        return true;
+    }
+
+    // 모두 현재 기둥 없이 다시 만들수 있는지 (유지 가능한 구조인지) 검사
+    public boolean canRemovePillar(int[] pos) {
+        int[] checkPos;
+
+        checkPos = movedPos(pos, DIRECTION_UP);
+
+        if (hasPillar(checkPos) && !canBuildPillar(checkPos))// 위로 기둥이 있으면 기둥을 만들수 있는지.
+            return false;
+
+        if (hasBeam(checkPos) && !canBuildBeam(checkPos))// 위로 보가 있으면 그 보를 만들 수 있는지.
+            return false;
+
+        checkPos = movedPos(pos, DIRECTION_UL);
+        if (hasBeam(checkPos) && !canBuildBeam(checkPos))// 왼쪽위로 보가 있으면 그 보를 만들 수 있는지
+            return false;
+
+        return true;
     }
 }
 
 /*
-
+테스트 1 〉	통과 (13.43ms, 53MB)
+테스트 2 〉	통과 (11.63ms, 53.5MB)
+테스트 3 〉	통과 (11.60ms, 52.9MB)
+테스트 4 〉	통과 (12.29ms, 53.1MB)
+테스트 5 〉	통과 (21.87ms, 53.6MB)
+테스트 6 〉	통과 (11.77ms, 53.3MB)
+테스트 7 〉	통과 (10.48ms, 53.1MB)
+테스트 8 〉	통과 (12.53ms, 52.8MB)
+테스트 9 〉	통과 (10.76ms, 53.8MB)
+테스트 10 〉	통과 (20.83ms, 55.6MB)
+테스트 11 〉	통과 (25.73ms, 55.3MB)
+테스트 12 〉	통과 (27.16ms, 54.4MB)
+테스트 13 〉	통과 (28.50ms, 57.6MB)
+테스트 14 〉	통과 (23.89ms, 53.5MB)
+테스트 15 〉	통과 (25.17ms, 57.5MB)
+테스트 16 〉	통과 (37.59ms, 55.1MB)
+테스트 17 〉	통과 (31.94ms, 55.5MB)
+테스트 18 〉	통과 (20.49ms, 55.3MB)
+테스트 19 〉	통과 (29.97ms, 55.6MB)
+테스트 20 〉	통과 (37.77ms, 57.7MB)
+테스트 21 〉	통과 (29.04ms, 54.6MB)
+테스트 22 〉	통과 (23.65ms, 56.1MB)
+테스트 23 〉	통과 (29.50ms, 55MB)
  */
