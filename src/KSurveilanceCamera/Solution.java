@@ -9,26 +9,23 @@ public class Solution {
 
         int carIndex = 0;
         int minExitTime = 30000;
-        int nextMinExitTime = 30000;
 
         int deployedCamera = 0;
         for(int[] route : routes){
-            minExitTime = nextMinExitTime;
             if(route[0] >= minExitTime){
                 // Deploy And Reset
                 deployedCamera++;
                 carIndex=0;
-                nextMinExitTime = 30000;
-            }            
                 
-            if(route[0] == minExitTime) {
-                continue;//같으면 현재 차량도 카메라에 찍힌거니까 제외
+                if(route[0] == minExitTime) {
+                    minExitTime = 30000;
+                    continue;//같으면 현재 차량도 카메라에 찍힌거니까 제외
+                }
+                minExitTime = 30000;
             }
-
-            minExitTime = nextMinExitTime;
             // 합류
             carIndex++;
-            nextMinExitTime = minExitTime<route[1]?minExitTime:route[1];
+            minExitTime = minExitTime<route[1]?minExitTime:route[1];
             
         }
         if(carIndex>0) deployedCamera++;
@@ -67,6 +64,18 @@ public class Solution {
 }
 
 /*
+정확성  테스트
+테스트 1 〉   통과 (0.70ms, 51.8MB)
+테스트 2 〉   통과 (0.78ms, 54.3MB)
+테스트 3 〉   통과 (0.85ms, 53MB)
+테스트 4 〉   통과 (0.84ms, 52.3MB)
+테스트 5 〉   통과 (2.00ms, 52.5MB)
+효율성  테스트
+테스트 1 〉   통과 (7.44ms, 53.3MB)
+테스트 2 〉   통과 (4.85ms, 52.8MB)
+테스트 3 〉   통과 (10.40ms, 57.5MB)
+테스트 4 〉   통과 (1.19ms, 54.3MB)
+테스트 5 〉   통과 (8.33ms, 57MB)
  */
 
  
