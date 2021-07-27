@@ -5,45 +5,21 @@ import java.util.Arrays;
 //디버그 포인트 찍어놓고 실행흐름대로 설명을 해보자.
 public class Solution {
     public int solution(int[][] routes) {
-        arr2DSort(routes);
+        Arrays.sort(routes, 
+            (o1, o2) -> {return Integer.compare(o1[1], o2[1]);}
+        );
 
-        int carIndex = 0;
-        int minExitTime = 30000;
-
+        int nextExitTime = -30000;
         int deployedCamera = 0;
         for(int[] route : routes){
-            if(route[0] >= minExitTime){
-                // Deploy And Reset
-                deployedCamera++;
-                carIndex=0;
-                
-                if(route[0] == minExitTime) {
-                    minExitTime = 30000;
-                    continue;//같으면 현재 차량도 카메라에 찍힌거니까 제외
-                }
-                minExitTime = 30000;
-            }
-            // 합류
-            carIndex++;
-            minExitTime = minExitTime<route[1]?minExitTime:route[1];
-            
+            if(route[0] >nextExitTime){
+                deployedCamera++;  
+                nextExitTime = 30001;
+            }    
+            nextExitTime = Math.min(nextExitTime,route[1]);  
         }
-        if(carIndex>0) deployedCamera++;
 
         return deployedCamera;
-    }
-
-    // 산당님 소스에서 카피
-    // 앞자리부터 우선 순위로 정렬
-    public static void arr2DSort(int[][] array) {
-        Arrays.sort(array, (o1, o2) -> {
-            if(o1[0] == o2[0]){
-                return Integer.compare(o1[1], o2[1]);
-            }
-            else {
-                return Integer.compare(o1[0], o2[0]);
-            }
-        });
     }
     //경로 입력 - 차량 입력
     // 추가 경로 입력시 중복 구간 확인 차량 후  차량 리스트 추가
