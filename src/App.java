@@ -1,14 +1,15 @@
-import KSurveilanceCamera.Solution;
+import LLinkIsland.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
         
         Solution solved = new Solution();
         
-        //KSurveilanceCamera
-        int[][] routes = {{0,2},{2,3},{3,4},{4,6}};
-        int answer = solved.solution(routes);
-
+        //LLinkIsland
+        int n = 5;
+        int[][] costs = {{0,1,5},{1,2,3},{2,3,3},{3,1,2},{3,0,4},{2,4,6},{4,0,7}};
+        int answer = solved.solution(n, costs);
+        
         System.out.println("Answer is " + answer);
     }
 }
@@ -102,6 +103,11 @@ public class App {
         // int n = 5;
         // int[][] buildFrame = {{1,0,0,1},{1,1,1,1},{2,1,0,1},{2,2,1,1},{5,0,0,1},{5,1,0,1},{4,2,1,1},{3,2,1,1}};
         //int[][] answer = solved.solution(n, buildFrame);
+
+        
+        //KSurveilanceCamera
+        // int[][] routes = {{0,2},{2,3},{3,4},{4,6}};
+        // int answer = solved.solution(routes);
     }
 }
 
