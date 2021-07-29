@@ -7,7 +7,7 @@ public class App {
         
         //LLinkIsland
         int n = 5;
-        int[][] costs = {{0,1,5},{1,2,3},{2,3,3},{3,1,2},{3,0,4},{2,4,6},{4,0,7}};
+        int[][] costs = {{1, 0, 1}, {2, 3, 1}, {1, 2, 5}}; // 7;
         int answer = solved.solution(n, costs);
         
         System.out.println("Answer is " + answer);

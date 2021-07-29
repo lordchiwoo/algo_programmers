@@ -1,8 +1,12 @@
 package LLinkIsland;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 //디버그 포인트 찍어놓고 실행흐름대로 설명을 해보자.
 public class Solution {
@@ -18,6 +22,8 @@ public class Solution {
     List<Integer> linkedIslandList;
     List<List<Integer>> linkedIslandGroupList;
 
+    Map<Integer, Integer> linkedIslandMap;
+
     public int solution(int n, int[][] costs) {
         int answer = 0;
         boolean useCost = false;
@@ -25,7 +31,74 @@ public class Solution {
         Arrays.sort(costs, (o1, o2) -> {
             return Integer.compare(o1[2], o2[2]);
         });
+        linkedIslandMap = new HashMap<>();
+        
+        for (int[] cost : costs) {
+            useCost = false;
+            boolean[] isIslandLinked = { linkedIslandMap.get(cost[0])!=null, linkedIslandMap.get(cost[1])!=null };
 
+            if (isIslandLinked[0] && isIslandLinked[1]) {
+                //분리되어있으면 합쳐줘야한다.
+                useCost = checkAndMergeIslandMap(cost);
+            } else {
+                useCost = true;
+                addIslandToMap(cost, isIslandLinked);
+            }
+
+            // 연결을 사용했으면 비용추가
+            if (useCost) answer += cost[2];
+        }
+        return answer;
+    }
+
+    private boolean checkAndMergeIslandMap(int[] cost) {
+        int[] linkedIslandTopIndex = {0,0};
+        for (int i = 0; i < 2; i++) {
+            linkedIslandTopIndex[i] = findTopIsland(cost[i]);
+        }
+
+        // 같은 그룹에 있는지 확인하고
+        if (linkedIslandTopIndex[0]==linkedIslandTopIndex[1]) {
+            // 같은 그룹이면 스킵한다.
+            return false;
+        } else {
+            for(Entry<Integer,Integer> changeTarget : linkedIslandMap.entrySet()){
+                if(changeTarget.getValue() == linkedIslandTopIndex[1]){
+                    changeTarget.setValue(linkedIslandTopIndex[0]);
+                }
+            }
+            return true;
+        }
+    }
+
+    private void addIslandToMap(int[] cost, boolean[] isIslandLinked) {
+        // 케이스 : 한쪽만 올라가 있으면 상대방의 탑인덱스에 내 인덱스를 연결
+        // 둘다 없으면 한쪽을 탑인덱스로 등록하고 반대쪽을 등록(자기 자신을 가리키게 됨)
+        for (int i = 0; i < 2; i++) {
+            //Top이 없으면 자기 자신이 Top Index
+            int linkedIslandTopIndex = findTopIsland(cost[1-i]);
+            if (isIslandLinked[i] == false) {
+                linkedIslandMap.put(cost[i],linkedIslandTopIndex);
+            }
+        }
+    }
+
+    private int findTopIsland(int islandIndex){
+        Integer returnIslandIndex = linkedIslandMap.get(islandIndex);
+        while(returnIslandIndex!=null && returnIslandIndex!=islandIndex){
+            islandIndex = returnIslandIndex;
+            returnIslandIndex = linkedIslandMap.get(returnIslandIndex);
+        }
+        return returnIslandIndex!=null?returnIslandIndex:islandIndex;
+    }
+
+    public int solution2(int n, int[][] costs) {
+        int answer = 0;
+        boolean useCost = false;
+
+        Arrays.sort(costs, (o1, o2) -> {
+            return Integer.compare(o1[2], o2[2]);
+        });
         linkedIslandList = new ArrayList<>();
         linkedIslandGroupList = new ArrayList<>();
         
