@@ -1,4 +1,4 @@
-import LLinkIsland.Solution;
+import MRescueBoat.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -6,9 +6,9 @@ public class App {
         Solution solved = new Solution();
         
         //LLinkIsland
-        int n = 5;
-        int[][] costs = {{1, 0, 1}, {2, 3, 1}, {1, 2, 5}}; // 7;
-        int answer = solved.solution(n, costs);
+        int[] people = {70, 50, 80, 50}; // 7;
+        int limit = 100;
+        int answer = solved.solution(people, limit);
         
         System.out.println("Answer is " + answer);
     }
@@ -24,11 +24,12 @@ public class App {
 //import HNumberOfRooms.Solution;
 //import ILockAndKey.Solution;
 //import JPillarAndBeam.Solution;
+//import LLinkIsland.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
         Solution solved = new Solution();
-
+        
         //Aprinter
         //int{} priorities = {2, 1, 3, 2};//  {1, 1, 9, 1, 1, 1};//  {2, 2, 5, 6, 7, 4, 1, 8, 3, 1, 3, 1, 5, 7, 4, 9, 3, 2};
         //int location =2;//  0;//  8;
@@ -108,6 +109,12 @@ public class App {
         //KSurveilanceCamera
         // int[][] routes = {{0,2},{2,3},{3,4},{4,6}};
         // int answer = solved.solution(routes);
+
+        
+        //LLinkIsland
+        // int n = 5;
+        // int[][] costs = {{1, 0, 1}, {2, 3, 1}, {1, 2, 5}}; // 7;
+        // int answer = solved.solution(n, costs);
     }
 }
 
