@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 //디버그 포인트 찍어놓고 실행흐름대로 설명을 해보자.
 public class Solution {
@@ -20,7 +21,7 @@ public class Solution {
     // 그룹 분리가 발생할 수 있으므로 그룹이 하나될때까지 하도록 조건 추가
 
     List<Integer> linkedIslandList;
-    List<List<Integer>> linkedIslandGroupList;
+    HashSet<List<Integer>> linkedIslandGroupSet;
 
     Map<Integer, Integer> linkedIslandMap;
 
@@ -100,7 +101,7 @@ public class Solution {
             return Integer.compare(o1[2], o2[2]);
         });
         linkedIslandList = new ArrayList<>();
-        linkedIslandGroupList = new ArrayList<>();
+        linkedIslandGroupSet = new HashSet<>();
         
         for (int[] cost : costs) {
             useCost = false;
@@ -118,25 +119,21 @@ public class Solution {
             if (useCost) answer += cost[2];
 
             // 모두 연결되었고 하나로 연결되었으면 모든 섬이 서로 통행가능
-            if (linkedIslandList.size() == n && linkedIslandGroupList.size() == 1) break;
+            if (linkedIslandList.size() == n && linkedIslandGroupSet.size() == 1) break;
         }
         return answer;
     }
 
     private void addIslandToLinkedGroup(int[] cost, boolean[] isIslandLinked) {
         // 케이스 : 한쪽만 올라가 있으면 한쪽에 집어넣고 끝 
-        // 둘다 없으면 새로 생성해서 집어넣고 linkedIslandGroupList에 추가
+        // 둘다 없으면 새로 생성해서 집어넣고 linkedIslandGroupSet에 추가
         for (int i = 0; i < 2; i++) {
             int linkedIslandIndex = 1 - i;
             if (isIslandLinked[i] == false) {
                 List<Integer> tempLinkedIslandGroup = getLinkedIslandGroup(cost[linkedIslandIndex]);
                 
-                // 둘다 연결이 안되어있으면 새로 생성해준다
-                if (tempLinkedIslandGroup == null) {
-                    tempLinkedIslandGroup = new ArrayList<>();
-                    linkedIslandGroupList.add(tempLinkedIslandGroup);
-                }
 
+                linkedIslandGroupSet.add(tempLinkedIslandGroup);
                 linkedIslandList.add(cost[i]);
                 tempLinkedIslandGroup.add(cost[i]);
             }
@@ -154,17 +151,18 @@ public class Solution {
         } else {
             // 없으면 연결하고 두 그룹을 합친다.
             tempLinkedIslandGroup_for0.addAll(tempLinkedIslandGroup_for1);
-            linkedIslandGroupList.remove(tempLinkedIslandGroup_for1);
+            linkedIslandGroupSet.remove(tempLinkedIslandGroup_for1);
             return true;
         }
     }
-
+    
     private List<Integer> getLinkedIslandGroup(int i) {
-        for (List<Integer> linkedIslandGroup : linkedIslandGroupList) 
+        for (List<Integer> linkedIslandGroup : linkedIslandGroupSet) 
             if (linkedIslandGroup.contains(i))
                 return linkedIslandGroup;
                 
-        return null;
+        // 연결이 안되어있으면 새로 생성해준다
+        return new ArrayList<>();
     }
 }
 
