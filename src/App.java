@@ -1,4 +1,5 @@
-import MRescueBoat.Solution;
+import NNumberSolitaire.Solution;
+//import MRescueBoat.Solution;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -6,9 +7,12 @@ public class App {
         Solution solved = new Solution();
         
         //LLinkIsland
-        int[] people = {70, 50, 80, 50}; // 7;
-        int limit = 100;
-        int answer = solved.solution(people, limit);
+        // int[] people = {70, 50, 80, 50}; // 7;
+        // int limit = 100;
+        // int answer = solved.solution(people, limit);
+        
+        int[] arr = { 1 , -2, 0 , -100, -100, -100, -100, -100, -100, -100, -10, -10, -10, -10, -1, 9 , -1, -2 };
+        int answer = solved.solution(arr);
         
         System.out.println("Answer is " + answer);
     }
