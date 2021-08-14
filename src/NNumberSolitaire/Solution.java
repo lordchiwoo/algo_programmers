@@ -27,20 +27,20 @@ public class Solution {
             int myValue = numArr[i];
 
             // 일단 내 바로 앞에서 왔다고 가정하고.
-            int maxPathSum = bestPathValueList.get(i-1)+myValue;
+            int maxPathSum = Integer.MIN_VALUE;
 
             // 내 앞 6개의 값(나에게 올 수 있는 후보들) 중에 최대값을 선택한다.
             for(int prevSearchIdx = 1; prevSearchIdx<7; prevSearchIdx++)
             {
                 if(i-prevSearchIdx < 0) break;
-                int pathSum = bestPathValueList.get(i-prevSearchIdx)+myValue;
+                int pathSum = bestPathValueList.get(i-prevSearchIdx);
                 if(maxPathSum < pathSum){
                     maxPathSum = pathSum;
                 }
             }
 
             // 현재 스퀘어로 올때 가질 수 있는 최대값을 저장한다.
-            bestPathValueList.add(maxPathSum);
+            bestPathValueList.add(maxPathSum+myValue);
         }
 
         answer = bestPathValueList.get(numArr.length-1);
