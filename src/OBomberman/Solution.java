@@ -1,13 +1,7 @@
 package OBomberman;
 
 import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.text.*;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.regex.*;
 import java.util.stream.*;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -68,6 +62,7 @@ class Result {
     public static void explodeResult(char[][] planted, char[][] result){
         for(int i=0; i<gridRows; i++){
             for(int j=0; j<gridColumns; j++){
+                //If a bomb is found, Process explode and get the result of Explosion
                 if(planted[i][j]=='O')
                     processBombExplode(result,i,j);
             }
@@ -76,11 +71,13 @@ class Result {
     }
     
     public static void processBombExplode(char[][] result, int row, int col){
+        //Coordinates of bomb and affected cells (UDLR).
         int[][] bombExplodeRange = {{row,col},{row,col+1},{row,col-1},{row+1,col},{row-1,col}};
         
         for(int i=0; i<bombExplodeRange.length; i++){
             int r = bombExplodeRange[i][0];
             int c = bombExplodeRange[i][1];
+            //If r,c is in the Grid, Draw "Exploded" Cell
             if(r>=0 && r<gridRows
                 && c>=0 && c<gridColumns){
                     result[r][c]='.';
@@ -89,6 +86,7 @@ class Result {
         return;
     }
     
+    // char 2d Array를 다시 String List로 변환한다.
     public static List<String> buildStringFrom2dArr(char[][] bombMap){
         List<String> resultMap = new ArrayList<>();
         for(int i=0;i<gridRows;i++){

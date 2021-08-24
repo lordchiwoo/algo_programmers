@@ -9,52 +9,51 @@ class Solution {
         int j=1;
         List<Integer> maxSquareRootList = new ArrayList<>();
         maxSquareRootList.add(0);
+
+        //삽질 1
+        //1의 제곱 부터 101까지
         for(;i<101;i++)
         {
             int squareNum = i*i;
             while(j<squareNum){
+                //제곱수 이전 까지를 이전 제곱근으로 채운다
                 maxSquareRootList.add(i-1);
                 j++;
             }
+            //제곱근-제곱수 SET 추가
             squareNums.put(i, squareNum);
+
+            // n보다 작은 최대 제곱수를 찾으면 멈춘다.
             if(n/squareNum < 1) break;
         }
         maxSquareRootList.add(i);
-        
-        //List<List<Integer>> listOfSquares = new ArrayList<>();
-        //listOfSquares.add(List.of());
 		
         List<Integer> numOfSquares = new ArrayList<>();		
         numOfSquares.add(0);
         
         int squareRootNum, minSize;
-        //minSquareRootNum, 
         int squareNum, currentSize;
-        //List<Integer> minimumPerpectSquareList;
+        //DP시작
         for(i=1; i<=n ; i++){
+            //현재 숫자보다 작거나 같은 최대 제곱수의 제곱근을 가져와서
             squareRootNum = maxSquareRootList.get(i);
             minSize = Integer.MAX_VALUE;
-            //minSquareRootNum = Integer.MAX_VALUE;
             
+            //1이 될 때까지 제곱수를 꺼내와서
             while(squareRootNum>=1){
                 squareNum = squareNums.get(squareRootNum);
-                //currentSize = listOfSquares.get(i-squareNum).size()+1;
-                currentSize = numOfSquares.get(i-squareNum)+1;
-                if(minSize > currentSize){
+                //현재 숫자에서 해당 제곱수를 뺐을 때를 구성하는 최소 제곱수 갯수를 가지고 와서 
+                currentSize = numOfSquares.get(i-squareNum);
+                //가장 작은 수를 찾는다.
+                if(minSize > currentSize)
                     minSize = currentSize;
-                    //minSquareRootNum = squareRootNum;
-                }
+
                 squareRootNum--;
             }
-            //squareNum = squareNums.get(minSquareRootNum);
-            //minimumPerpectSquareList = new ArrayList<>(listOfSquares.get(i-squareNum));
-            //minimumPerpectSquareList = new ArrayList<>(listOfSquares.get(i-squareNum));
-            //minimumPerpectSquareList.add(squareNum);
-            //listOfSquares.add(minimumPerpectSquareList);
-            numOfSquares.add(minSize);
+            //가장 작은 수 + 1 이 현재 숫자를 구성하는 최소 요소 갯수가 된다.
+            numOfSquares.add(minSize+1);
         }
         
-        //int answer = listOfSquares.get(n).size();
         int answer = numOfSquares.get(n);
         return answer;
     }
